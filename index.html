@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Accessible Park Planner</title>
+  <style>
+    :root{
+      --blue:#0874d8;
+      --ink:#182033;
+      --muted:#687084;
+      --panel:#ffffff;
+      --soft:#f3f6f9;
+      --border:#d9e0e7;
+      --success:#198754;
+      --shadow:0 16px 42px rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:#dfe7ee;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      display:grid;
+      place-items:center;
+    }
+    button,input,select{font:inherit}
+    .app{
+      position:relative;
+      width:min(100vw,430px);
+      height:min(100vh,932px);
+      overflow:hidden;
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+    .view{
+      position:absolute;
+      inset:0;
+      display:none;
+      background:#fff;
+    }
+    .view.active{display:block}
+
+    /* Questionnaire */
+    .questionnaire{
+      background:linear-gradient(180deg,#0a78dc 0%,#0a78dc 22%,#f7f9fb 22%,#f7f9fb 100%);
+      overflow:auto;
+      padding:32px 18px 110px;
+    }
+    .brand{
+      color:#fff;
+      margin-bottom:26px;
+    }
+    .brand small{
+      display:block;
+      opacity:.86;
+      font-weight:700;
+      letter-spacing:.03em;
+    }
+    .brand h1{
+      font-size:30px;
+      line-height:1.05;
+      margin:8px 0 6px;
+    }
+    .brand p{
+      margin:0;
+      opacity:.9;
+      font-size:14px;
+      max-width:330px;
+    }
+    .progress-wrap{
+      display:flex;
+      gap:8px;
+      margin-bottom:18px;
+    }
+    .progress-dot{
+      height:7px;
+      flex:1;
+      border-radius:999px;
+      background:#c8d5e3;
+    }
+    .progress-dot.active{background:#0a78dc}
+    .card{
+      background:#fff;
+      border-radius:24px;
+      padding:22px;
+      box-shadow:0 12px 35px rgba(0,0,0,.12);
+    }
+    .step{display:none}
+    .step.active{display:block}
+    .step h2{
+      margin:0 0 6px;
+      font-size:24px;
+    }
+    .step p{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+    .choice-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .choice{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:16px;
+      padding:14px 12px;
+      text-align:left;
+      cursor:pointer;
+      min-height:72px;
+      transition:.15s ease;
+    }
+    .choice strong{display:block;margin-bottom:3px}
+    .choice span{color:var(--muted);font-size:13px}
+    .choice.selected{
+      border-color:var(--blue);
+      background:#edf6ff;
+      box-shadow:0 0 0 2px rgba(8,116,216,.12);
+    }
+    .field{
+      margin:14px 0;
+    }
+    .field label{
+      display:block;
+      font-weight:750;
+      margin-bottom:7px;
+    }
+    .field select,.field input{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:13px 14px;
+      background:#fff;
+    }
+    .range-row{
+      display:flex;
+      gap:8px;
+    }
+    .range-row button{
+      flex:1;
+      padding:12px 8px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+    }
+    .range-row button.selected{
+      color:#075da9;
+      border-color:var(--blue);
+      background:#edf6ff;
+      font-weight:800;
+    }
+    .nav-actions{
+      display:flex;
+      gap:10px;
+      margin-top:22px;
+    }
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:14px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn.primary{background:var(--blue);color:#fff;flex:1}
+    .btn.secondary{background:#e9eef4;color:#1d2a3a}
+    .summary-box{
+      background:var(--soft);
+      border-radius:16px;
+      padding:15px;
+      margin:12px 0;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    /* Main app shell */
+    .screen-img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+    .start-over{
+      position:absolute;
+      top:22px;
+      right:16px;
+      z-index:5;
+      border:0;
+      background:rgba(255,255,255,.94);
+      color:#075da9;
+      font-weight:800;
+      border-radius:999px;
+      padding:9px 12px;
+      box-shadow:0 7px 18px rgba(0,0,0,.16);
+      cursor:pointer;
+    }
+    .itinerary-pill{
+      position:absolute;
+      left:16px;
+      right:16px;
+      bottom:92px;
+      z-index:4;
+      border:0;
+      background:rgba(255,255,255,.97);
+      border-radius:16px;
+      padding:13px 16px;
+      text-align:left;
+      box-shadow:0 10px 28px rgba(0,0,0,.22);
+      cursor:pointer;
+    }
+    .itinerary-pill strong{display:block}
+    .itinerary-pill span{font-size:13px;color:var(--muted)}
+    .hotspot{
+      position:absolute;
+      border:0;
+      background:transparent;
+      cursor:pointer;
+      border-radius:999px;
+    }
+    .pin-dark{left:31%;top:29%;width:25%;height:15%}
+    .pin-nintendo{left:7%;top:40%;width:28%;height:15%}
+    .pin-potter{left:49%;top:43%;width:35%;height:14%}
+    .pin-berk{left:25%;top:50%;width:37%;height:15%}
+    .pin-celestial{left:0%;top:54%;width:30%;height:16%}
+
+    .ai{
+      position:absolute;
+      right:16px;
+      bottom:160px;
+      width:58px;
+      height:58px;
+      border:0;
+      border-radius:50%;
+      background:linear-gradient(145deg,#0c7de8,#005eb8);
+      color:#fff;
+      font-size:24px;
+      box-shadow:0 10px 25px rgba(0,89,180,.35);
+      cursor:pointer;
+      z-index:4;
+    }
+    .toast{
+      position:absolute;
+      left:50%;
+      bottom:155px;
+      transform:translate(-50%,20px);
+      width:calc(100% - 32px);
+      padding:13px 16px;
+      background:rgba(20,28,44,.94);
+      color:#fff;
+      border-radius:14px;
+      font-size:14px;
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      text-align:center;
+      z-index:8;
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    .backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.28);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s;
+      z-index:9;
+    }
+    .backdrop.open{opacity:1;pointer-events:auto}
+    .sheet{
+      position:absolute;
+      left:0;right:0;bottom:0;
+      z-index:10;
+      background:rgba(255,255,255,.99);
+      border-radius:26px 26px 0 0;
+      padding:12px 20px 24px;
+      transform:translateY(105%);
+      transition:transform .28s cubic-bezier(.22,.8,.25,1);
+      box-shadow:0 -18px 55px rgba(0,0,0,.22);
+      max-height:78%;
+      overflow:auto;
+    }
+    .sheet.open{transform:translateY(0)}
+    .grabber{
+      width:46px;height:5px;border-radius:9px;background:#c9ced6;margin:0 auto 16px;
+    }
+    .sheet h2{margin:0 0 5px;font-size:24px}
+    .land{color:var(--muted);margin-bottom:16px}
+    .score-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+    .badge{
+      padding:7px 10px;background:#edf5ff;color:#075ea9;border-radius:999px;font-size:13px;font-weight:700;
+    }
+    .details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+    .detail{background:var(--soft);padding:12px;border-radius:14px;font-size:13px}
+    .detail b{display:block;font-size:14px;margin-bottom:3px}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .close{
+      position:absolute;right:18px;top:14px;border:0;background:#edf0f4;width:34px;height:34px;border-radius:50%;
+      font-size:18px;cursor:pointer;
+    }
+
+    /* Itinerary */
+    .itinerary{
+      overflow:auto;
+      padding:24px 16px 120px;
+      background:#f6f8fa;
+    }
+    .topline{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .back-btn{
+      border:0;
+      background:#fff;
+      width:40px;height:40px;
+      border-radius:50%;
+      font-size:20px;
+      box-shadow:0 5px 14px rgba(0,0,0,.1);
+      cursor:pointer;
+    }
+    .topline h1{font-size:26px;margin:0}
+    .plan-note{
+      background:#eaf5ff;
+      color:#075da9;
+      padding:14px;
+      border-radius:16px;
+      font-size:14px;
+      margin-bottom:16px;
+    }
+    .timeline{display:grid;gap:12px}
+    .stop{
+      background:#fff;
+      border-radius:18px;
+      padding:15px;
+      box-shadow:0 7px 18px rgba(0,0,0,.07);
+      display:grid;
+      grid-template-columns:64px 1fr;
+      gap:12px;
+    }
+    .time{
+      font-weight:850;
+      color:#075da9;
+    }
+    .stop h3{margin:0 0 4px;font-size:17px}
+    .stop p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
+    .stop .tag{
+      display:inline-block;
+      margin-top:8px;
+      background:#f0f4f8;
+      padding:5px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    /* Chat */
+    .chat{
+      display:none;
+      position:absolute;
+      inset:90px 14px 104px;
+      z-index:12;
+      background:rgba(255,255,255,.99);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:18px;
+      overflow:hidden;
+    }
+    .chat.open{display:flex;flex-direction:column}
+    .chat h3{margin:0}
+    .messages{flex:1;overflow:auto;padding:16px 0}
+    .bubble{max-width:88%;padding:11px 13px;border-radius:15px;margin-bottom:10px;font-size:14px;line-height:1.35}
+    .bot{background:#eef5ff}
+    .user{background:var(--blue);color:#fff;margin-left:auto}
+    .quick{display:flex;flex-wrap:wrap;gap:8px}
+    .quick button{border:1px solid #cbd8e6;background:#fff;border-radius:999px;padding:9px 11px;cursor:pointer}
+    .chat-close{margin-left:auto;border:0;background:none;font-size:22px;cursor:pointer}
+
+    @media(max-width:430px){
+      .app{width:100vw;height:100vh;box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+
+    <section class="view questionnaire active" id="questionnaireView">
+      <div class="brand">
+        <small>ACCESSIBLE PARK PLANNER</small>
+        <h1>Let’s plan your park day</h1>
+        <p>Answer a few quick questions and we’ll generate a lower-stress itinerary around your group’s needs.</p>
+      </div>
+
+      <div class="progress-wrap" id="progress"></div>
+
+      <div class="card">
+        <div class="step active" data-step="0">
+          <h2>Who are you visiting with?</h2>
+          <p>This helps us choose pacing, breaks, and attraction types.</p>
+          <div class="choice-grid" data-key="group">
+            <button class="choice" data-value="Solo"><strong>Solo</strong><span>One guest</span></button>
+            <button class="choice" data-value="Adults"><strong>Adults</strong><span>Adult group</span></button>
+            <button class="choice" data-value="Family"><strong>Family</strong><span>Adults and children</span></button>
+            <button class="choice" data-value="Caregiver group"><strong>Caregiver group</strong><span>Guest with support person</span></button>
+          </div>
+        </div>
+
+        <div class="step" data-step="1">
+          <h2>What mobility support is needed?</h2>
+          <p>Select the closest match. You can still change individual stops later.</p>
+          <div class="choice-grid" data-key="mobility">
+            <button class="choice" data-value="No mobility limitations"><strong>No limitations</strong><span>Standard routes are okay</span></button>
+            <button class="choice" data-value="Reduce walking"><strong>Reduce walking</strong><span>Group nearby stops</span></button>
+            <button class="choice" data-value="Wheelchair or scooter"><strong>Wheelchair or scooter</strong><span>Prioritize accessible routes</span></button>
+            <button class="choice" data-value="Frequent seating"><strong>Frequent seating</strong><span>Add more rest stops</span></button>
+          </div>
+        </div>
+
+        <div class="step" data-step="2">
+          <h2>How should we handle sensory needs?</h2>
+          <p>We can space out loud or intense experiences and add quiet breaks.</p>
+          <div class="choice-grid" data-key="sensory">
+            <button class="choice" data-value="No sensory limits"><strong>No limits</strong><span>Any intensity is okay</span></button>
+            <button class="choice" data-value="Avoid flashing lights"><strong>Avoid flashing</strong><span>Reduce strobe-heavy attractions</span></button>
+            <button class="choice" data-value="Avoid loud attractions"><strong>Avoid loud rides</strong><span>Prefer calmer experiences</span></button>
+            <button class="choice" data-value="Add quiet breaks"><strong>Quiet breaks</strong><span>Schedule decompression time</span></button>
+          </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <h2>What are your must-dos?</h2>
+          <p>Pick as many as you like. We will build the route around these lands.</p>
+          <div class="choice-grid multi" data-key="mustDos">
+            <button class="choice" data-value="Super Nintendo World"><strong>Nintendo</strong><span>Interactive and colorful</span></button>
+            <button class="choice" data-value="Ministry of Magic"><strong>Harry Potter</strong><span>Highly themed experience</span></button>
+            <button class="choice" data-value="Isle of Berk"><strong>Isle of Berk</strong><span>Family-friendly area</span></button>
+            <button class="choice" data-value="Dark Universe"><strong>Dark Universe</strong><span>High-intensity area</span></button>
+          </div>
+        </div>
+
+        <div class="step" data-step="4">
+          <h2>Timing and breaks</h2>
+          <p>Choose your arrival time and how often you want a break.</p>
+          <div class="field">
+            <label for="arrival">Arrival time</label>
+            <select id="arrival">
+              <option value="9:00 AM">9:00 AM</option>
+              <option value="10:00 AM">10:00 AM</option>
+              <option value="11:00 AM">11:00 AM</option>
+              <option value="12:00 PM">12:00 PM</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Break frequency</label>
+            <div class="range-row" data-key="breaks">
+              <button data-value="Every 60 minutes">60 min</button>
+              <button data-value="Every 90 minutes">90 min</button>
+              <button data-value="As needed">As needed</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="meal">Meal preference</label>
+            <select id="meal">
+              <option value="Lunch around 12:30 PM">Lunch around 12:30 PM</option>
+              <option value="Lunch around 1:30 PM">Lunch around 1:30 PM</option>
+              <option value="No planned meal">No planned meal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="step" data-step="5">
+          <h2>Ready to generate your itinerary?</h2>
+          <p>We’ll prioritize your must-dos, reduce backtracking, and insert accessibility-friendly breaks.</p>
+          <div class="summary-box" id="summaryBox"></div>
+        </div>
+
+        <div class="nav-actions">
+          <button class="btn secondary" id="backStep" style="display:none">Back</button>
+          <button class="btn primary" id="nextStep">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="mapView">
+      <img class="screen-img" src="assets/park-screen.jpg" alt="Park map"/>
+      <button class="start-over" id="startOver">Edit answers</button>
+      <button class="hotspot pin-dark" data-id="dark" aria-label="Dark Universe"></button>
+      <button class="hotspot pin-nintendo" data-id="nintendo" aria-label="Super Nintendo World"></button>
+      <button class="hotspot pin-potter" data-id="potter" aria-label="Ministry of Magic"></button>
+      <button class="hotspot pin-berk" data-id="berk" aria-label="Isle of Berk"></button>
+      <button class="hotspot pin-celestial" data-id="celestial" aria-label="Celestial Park"></button>
+
+      <button class="ai" id="aiBtn" aria-label="Open accessibility assistant">✦</button>
+      <button class="itinerary-pill" id="openItinerary">
+        <strong id="itineraryTitle">Your itinerary is ready</strong>
+        <span id="itinerarySubtitle">Tap to view your personalized schedule</span>
+      </button>
+      <div class="toast" id="toast"></div>
+
+      <div class="backdrop" id="backdrop"></div>
+      <section class="sheet" id="sheet">
+        <div class="grabber"></div>
+        <button class="close" id="closeSheet">×</button>
+        <h2 id="title"></h2>
+        <div class="land" id="land"></div>
+        <div class="score-row">
+          <span class="badge" id="score"></span>
+          <span class="badge" id="wait"></span>
+          <span class="badge" id="status"></span>
+        </div>
+        <p id="description"></p>
+        <div class="details">
+          <div class="detail"><b>Mobility</b><span id="mobility"></span></div>
+          <div class="detail"><b>Sensory level</b><span id="sensory"></span></div>
+          <div class="detail"><b>Transfer required</b><span id="transfer"></span></div>
+          <div class="detail"><b>Nearest restroom</b><span id="restroom"></span></div>
+        </div>
+        <div class="actions">
+          <button class="btn secondary" id="directions">Get directions</button>
+          <button class="btn primary" id="addBtn">Add to itinerary</button>
+        </div>
+      </section>
+
+      <section class="chat" id="chat">
+        <div style="display:flex;align-items:center">
+          <h3>Accessibility Assistant</h3>
+          <button class="chat-close" id="chatClose">×</button>
+        </div>
+        <div class="messages" id="messages">
+          <div class="bubble bot">Hi! I can help adjust your generated itinerary around mobility, sensory needs, closures, restrooms, and breaks.</div>
+        </div>
+        <div class="quick">
+          <button data-chat="Find the nearest accessible restroom">Nearest restroom</button>
+          <button data-chat="Reduce walking in my itinerary">Reduce walking</button>
+          <button data-chat="I need a quiet break">Quiet break</button>
+          <button data-chat="A ride closed. Replan my day">Ride closed</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="view itinerary" id="itineraryView">
+      <div class="topline">
+        <button class="back-btn" id="backToMap">←</button>
+        <h1>Your park itinerary</h1>
+      </div>
+      <div class="plan-note" id="planNote"></div>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+  </main>
+
+<script>
+  const answers = {
+    group: "",
+    mobility: "",
+    sensory: "",
+    mustDos: [],
+    breaks: "",
+    arrival: "9:00 AM",
+    meal: "Lunch around 12:30 PM"
+  };
+
+  const attractions = {
+    dark:{name:"Dark Universe",land:"Monsters Unchained area",score:"Accessibility 2/5",wait:"46 min wait",status:"Open",description:"A high-intensity indoor experience with dark scenes, loud audio, flashing effects, and sudden motion.",mobility:"Accessible queue; alternate loading available",sensory:"High",transfer:"May be required",restroom:"About 4 minutes"},
+    nintendo:{name:"Super Nintendo World",land:"Interactive gaming area",score:"Accessibility 3/5",wait:"35 min wait",status:"Open",description:"A colorful, interactive land with several attractions, stairs in some areas, and frequent sensory stimulation.",mobility:"Step-free routes available",sensory:"Medium to high",transfer:"Varies by attraction",restroom:"About 3 minutes"},
+    potter:{name:"Ministry of Magic",land:"Wizarding World",score:"Accessibility 1/5",wait:"65 min wait",status:"Open",description:"A richly themed attraction with motion, enclosed spaces, audio effects, and extended queue sections.",mobility:"Accessible entrance available",sensory:"High",transfer:"Likely required",restroom:"About 5 minutes"},
+    berk:{name:"Isle of Berk",land:"How to Train Your Dragon",score:"Accessibility 4/5",wait:"20 min wait",status:"Open",description:"A family-focused land with wide paths, outdoor experiences, and several lower-intensity options.",mobility:"Wide paths and accessible viewing",sensory:"Low to medium",transfer:"Varies by attraction",restroom:"About 2 minutes"},
+    celestial:{name:"Celestial Park",land:"Central park area",score:"Accessibility 3/5",wait:"10 min nearby",status:"Open",description:"The central hub with dining, fountains, seating, and routes to the surrounding lands.",mobility:"Mostly level routes",sensory:"Low to medium",transfer:"Not applicable",restroom:"About 1 minute"}
+  };
+
+  let currentStep = 0;
+  let generatedPlan = [];
+  let selected = null;
+  const steps = [...document.querySelectorAll(".step")];
+  const progress = document.getElementById("progress");
+  const questionnaireView = document.getElementById("questionnaireView");
+  const mapView = document.getElementById("mapView");
+  const itineraryView = document.getElementById("itineraryView");
+
+  for(let i=0;i<steps.length;i++){
+    const dot=document.createElement("div");
+    dot.className="progress-dot"+(i===0?" active":"");
+    progress.appendChild(dot);
+  }
+
+  function updateProgress(){
+    [...progress.children].forEach((d,i)=>d.classList.toggle("active",i<=currentStep));
+  }
+
+  function showStep(index){
+    currentStep=index;
+    steps.forEach((s,i)=>s.classList.toggle("active",i===index));
+    document.getElementById("backStep").style.display=index===0?"none":"block";
+    document.getElementById("nextStep").textContent=index===steps.length-1?"Generate itinerary":"Continue";
+    if(index===steps.length-1) renderSummary();
+    updateProgress();
+  }
+
+  function renderSummary(){
+    const must = answers.mustDos.length ? answers.mustDos.join(", ") : "No specific must-dos";
+    document.getElementById("summaryBox").innerHTML = `
+      <b>Group:</b> ${answers.group || "Not selected"}<br>
+      <b>Mobility:</b> ${answers.mobility || "Not selected"}<br>
+      <b>Sensory:</b> ${answers.sensory || "Not selected"}<br>
+      <b>Must-dos:</b> ${must}<br>
+      <b>Arrival:</b> ${answers.arrival}<br>
+      <b>Breaks:</b> ${answers.breaks || "As needed"}<br>
+      <b>Meal:</b> ${answers.meal}
+    `;
+  }
+
+  document.querySelectorAll(".choice-grid").forEach(grid=>{
+    grid.addEventListener("click",e=>{
+      const btn=e.target.closest(".choice");
+      if(!btn) return;
+      const key=grid.dataset.key;
+      if(grid.classList.contains("multi")){
+        btn.classList.toggle("selected");
+        const val=btn.dataset.value;
+        if(btn.classList.contains("selected")){
+          if(!answers[key].includes(val)) answers[key].push(val);
+        }else{
+          answers[key]=answers[key].filter(x=>x!==val);
+        }
+      }else{
+        [...grid.querySelectorAll(".choice")].forEach(b=>b.classList.remove("selected"));
+        btn.classList.add("selected");
+        answers[key]=btn.dataset.value;
+      }
+    });
+  });
+
+  document.querySelectorAll(".range-row").forEach(row=>{
+    row.addEventListener("click",e=>{
+      const btn=e.target.closest("button");
+      if(!btn) return;
+      [...row.querySelectorAll("button")].forEach(b=>b.classList.remove("selected"));
+      btn.classList.add("selected");
+      answers[row.dataset.key]=btn.dataset.value;
+    });
+  });
+
+  document.getElementById("arrival").addEventListener("change",e=>answers.arrival=e.target.value);
+  document.getElementById("meal").addEventListener("change",e=>answers.meal=e.target.value);
+
+  document.getElementById("nextStep").onclick=()=>{
+    if(currentStep===0 && !answers.group){alert("Please choose who you are visiting with.");return;}
+    if(currentStep===1 && !answers.mobility){alert("Please choose a mobility option.");return;}
+    if(currentStep===2 && !answers.sensory){alert("Please choose a sensory option.");return;}
+    if(currentStep===4 && !answers.breaks) answers.breaks="As needed";
+    if(currentStep<steps.length-1){showStep(currentStep+1);return;}
+    generateItinerary();
+    questionnaireView.classList.remove("active");
+    mapView.classList.add("active");
+  };
+
+  document.getElementById("backStep").onclick=()=>showStep(Math.max(0,currentStep-1));
+
+  function addMinutes(time, mins){
+    let [clock,ampm]=time.split(" ");
+    let [h,m]=clock.split(":").map(Number);
+    if(ampm==="PM" && h!==12) h+=12;
+    if(ampm==="AM" && h===12) h=0;
+    let total=h*60+m+mins;
+    total%=1440;
+    let nh=Math.floor(total/60), nm=total%60;
+    let nap=nh>=12?"PM":"AM";
+    let dh=nh%12||12;
+    return `${dh}:${String(nm).padStart(2,"0")} ${nap}`;
+  }
+
+  function generateItinerary(){
+    const must = answers.mustDos.length ? [...answers.mustDos] : ["Celestial Park","Isle of Berk","Super Nintendo World"];
+    const lowSensory = answers.sensory.includes("Avoid") || answers.sensory.includes("quiet");
+    const reduceWalking = answers.mobility.includes("walking") || answers.mobility.includes("Wheelchair") || answers.mobility.includes("seating");
+
+    let route = ["Celestial Park"];
+    const preferredOrder = reduceWalking
+      ? ["Isle of Berk","Super Nintendo World","Ministry of Magic","Dark Universe"]
+      : ["Super Nintendo World","Ministry of Magic","Dark Universe","Isle of Berk"];
+
+    preferredOrder.forEach(x=>{ if(must.includes(x) && !route.includes(x)) route.push(x); });
+    preferredOrder.forEach(x=>{ if(!route.includes(x) && route.length<5) route.push(x); });
+
+    if(lowSensory){
+      route = route.filter(x=>x!=="Dark Universe" || must.includes("Dark Universe"));
+    }
+
+    let t=answers.arrival;
+    const plan=[];
+    plan.push({time:t,title:"Enter the park",desc:"Begin at Celestial Park and review the accessible route.",tag:"Arrival"});
+    t=addMinutes(t,30);
+
+    route.forEach((place,idx)=>{
+      if(place==="Celestial Park" && idx===0) return;
+      plan.push({
+        time:t,
+        title:place,
+        desc: place==="Isle of Berk"
+          ? "Explore lower-intensity attractions and accessible viewing areas."
+          : place==="Super Nintendo World"
+          ? "Visit priority attractions using the step-free route."
+          : place==="Ministry of Magic"
+          ? "Use the accessible entrance and allow extra queue time."
+          : "Visit only if the group is comfortable with high sensory intensity.",
+        tag: must.includes(place) ? "Must-do" : "Suggested"
+      });
+      t=addMinutes(t,60);
+
+      const shouldBreak = answers.breaks==="Every 60 minutes" || (answers.breaks==="Every 90 minutes" && idx%2===1);
+      if(shouldBreak){
+        plan.push({
+          time:t,
+          title: answers.sensory==="Add quiet breaks" ? "Quiet sensory break" : "Rest and hydration break",
+          desc:"Use nearby seating and the closest accessible restroom before continuing.",
+          tag:"Accessibility break"
+        });
+        t=addMinutes(t,25);
+      }
+    });
+
+    if(answers.meal!=="No planned meal"){
+      const mealTime = answers.meal.includes("1:30") ? "1:30 PM" : "12:30 PM";
+      plan.push({
+        time:mealTime,
+        title:"Lunch",
+        desc:"Reserved meal window near an accessible seating area.",
+        tag:"Meal"
+      });
+    }
+
+    generatedPlan = plan.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+    localStorage.setItem("generatedPlan",JSON.stringify(generatedPlan));
+    localStorage.setItem("plannerAnswers",JSON.stringify(answers));
+    renderItinerary();
+    document.getElementById("itineraryTitle").textContent=`${generatedPlan.length} planned stops`;
+    document.getElementById("itinerarySubtitle").textContent="Personalized around your accessibility answers";
+  }
+
+  function parseTime(time){
+    let [clock,ampm]=time.split(" ");
+    let [h,m]=clock.split(":").map(Number);
+    if(ampm==="PM" && h!==12)h+=12;
+    if(ampm==="AM" && h===12)h=0;
+    return h*60+m;
+  }
+
+  function renderItinerary(){
+    const noteParts=[];
+    if(answers.mobility) noteParts.push(answers.mobility);
+    if(answers.sensory) noteParts.push(answers.sensory);
+    if(answers.breaks) noteParts.push(answers.breaks);
+    document.getElementById("planNote").textContent =
+      "This route was generated using: " + noteParts.join(" • ") + ".";
+    document.getElementById("timeline").innerHTML = generatedPlan.map(item=>`
+      <article class="stop">
+        <div class="time">${item.time}</div>
+        <div>
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+          <span class="tag">${item.tag}</span>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function switchView(from,to){
+    from.classList.remove("active");
+    to.classList.add("active");
+  }
+
+  document.getElementById("openItinerary").onclick=()=>switchView(mapView,itineraryView);
+  document.getElementById("backToMap").onclick=()=>switchView(itineraryView,mapView);
+  document.getElementById("startOver").onclick=()=>{
+    switchView(mapView,questionnaireView);
+    showStep(0);
+  };
+
+  const sheet=document.getElementById("sheet");
+  const backdrop=document.getElementById("backdrop");
+  const toast=document.getElementById("toast");
+
+  function showToast(text){
+    toast.textContent=text;
+    toast.classList.add("show");
+    clearTimeout(window.toastTimer);
+    window.toastTimer=setTimeout(()=>toast.classList.remove("show"),2200);
+  }
+
+  function openSheet(id){
+    selected=id;
+    const a=attractions[id];
+    document.getElementById("title").textContent=a.name;
+    document.getElementById("land").textContent=a.land;
+    document.getElementById("score").textContent=a.score;
+    document.getElementById("wait").textContent=a.wait;
+    document.getElementById("status").textContent=a.status;
+    document.getElementById("description").textContent=a.description;
+    document.getElementById("mobility").textContent=a.mobility;
+    document.getElementById("sensory").textContent=a.sensory;
+    document.getElementById("transfer").textContent=a.transfer;
+    document.getElementById("restroom").textContent=a.restroom;
+    sheet.classList.add("open");
+    backdrop.classList.add("open");
+  }
+  function closeSheet(){sheet.classList.remove("open");backdrop.classList.remove("open")}
+  document.querySelectorAll(".hotspot").forEach(btn=>btn.onclick=()=>openSheet(btn.dataset.id));
+  document.getElementById("closeSheet").onclick=closeSheet;
+  backdrop.onclick=closeSheet;
+  document.getElementById("addBtn").onclick=()=>{
+    if(!selected)return;
+    const name=attractions[selected].name;
+    generatedPlan.push({
+      time:addMinutes(generatedPlan.at(-1)?.time || answers.arrival,60),
+      title:name,
+      desc:"Added manually from the map.",
+      tag:"Added stop"
+    });
+    generatedPlan.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+    renderItinerary();
+    showToast(`${name} added to your itinerary`);
+    closeSheet();
+  };
+  document.getElementById("directions").onclick=()=>{showToast("Accessible route preview started");closeSheet()};
+
+  const chat=document.getElementById("chat");
+  document.getElementById("aiBtn").onclick=()=>chat.classList.add("open");
+  document.getElementById("chatClose").onclick=()=>chat.classList.remove("open");
+  document.querySelectorAll("[data-chat]").forEach(btn=>{
+    btn.onclick=()=>{
+      const text=btn.dataset.chat;
+      const messages=document.getElementById("messages");
+      messages.insertAdjacentHTML("beforeend",`<div class="bubble user">${text}</div>`);
+      const reply=text.includes("restroom")
+        ?"The closest accessible restroom is in Celestial Park. I would route you there before your next stop."
+        :text.includes("walking")
+        ?"I grouped your next stops by land and added a seated break to reduce backtracking."
+        :text.includes("quiet")
+        ?"I inserted a 20-minute quiet break in Celestial Park before your next high-sensory attraction."
+        :"I removed the closed attraction and replaced it with the closest accessible option with a shorter wait.";
+      setTimeout(()=>{
+        messages.insertAdjacentHTML("beforeend",`<div class="bubble bot">${reply}</div>`);
+        messages.scrollTop=messages.scrollHeight;
+      },450);
+    };
+  });
+</script>
+</body>
+</html>
