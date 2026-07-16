@@ -120,6 +120,92 @@
       background:#edf6ff;
       box-shadow:0 0 0 2px rgba(8,116,216,.12);
     }
+    .choice-grid.single-col{grid-template-columns:1fr}
+    .park-card{
+      border:1px solid var(--border);
+      background:#f8fbff;
+      border-radius:14px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .park-card h4{
+      margin:0 0 8px;
+      font-size:15px;
+    }
+    .ride-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .ride-choice{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:10px;
+      padding:6px 8px;
+      text-align:left;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .ride-choice-content{
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:8px;
+      align-items:center;
+    }
+    .ride-thumb{
+      width:42px;
+      height:42px;
+      border-radius:8px;
+      overflow:hidden;
+      background:#dce8f5;
+      border:1px solid #c8d8ea;
+      position:relative;
+      flex:0 0 auto;
+    }
+    .ride-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .ride-thumb-fallback{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      color:#5e7592;
+      font-size:16px;
+      font-weight:800;
+    }
+    .ride-choice-text{
+      min-width:0;
+    }
+    .ride-choice strong{display:block;margin-bottom:2px;line-height:1.2}
+    .ride-choice small{display:block;color:var(--muted);line-height:1.2;font-size:11px}
+    .ride-choice.selected{
+      border-color:var(--blue);
+      background:#edf6ff;
+      color:#075da9;
+      font-weight:700;
+    }
+    .park-toggle{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:8px 0 10px;
+      font-size:12px;
+      color:var(--ink);
+    }
+    .park-toggle input{
+      width:16px;
+      height:16px;
+      accent-color:var(--blue);
+    }
+    .helper-text{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
     .field{
       margin:14px 0;
     }
@@ -135,6 +221,16 @@
       padding:13px 14px;
       background:#fff;
     }
+    .field textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:13px 14px;
+      background:#fff;
+      min-height:96px;
+      resize:vertical;
+    }
+    .conditional-field[hidden]{display:none}
     .range-row{
       display:flex;
       gap:8px;
@@ -186,42 +282,45 @@
       user-select:none;
       -webkit-user-drag:none;
     }
-    .start-over{
+    .itinerary-fab{
       position:absolute;
-      top:22px;
       right:16px;
-      z-index:5;
-      border:0;
-      background:rgba(255,255,255,.94);
-      color:#075da9;
-      font-weight:800;
-      border-radius:999px;
-      padding:9px 12px;
-      box-shadow:0 7px 18px rgba(0,0,0,.16);
-      cursor:pointer;
-    }
-    .itinerary-pill{
-      position:absolute;
-      left:16px;
-      right:16px;
-      bottom:92px;
+      top:88px;
       z-index:4;
+      width:58px;
+      height:58px;
       border:0;
-      background:rgba(255,255,255,.97);
-      border-radius:16px;
-      padding:13px 16px;
-      text-align:left;
-      box-shadow:0 10px 28px rgba(0,0,0,.22);
+      border-radius:50%;
+      background:#ffffff;
+      color:#075da9;
+      font-size:24px;
+      box-shadow:0 10px 24px rgba(0,0,0,.22);
       cursor:pointer;
+      display:grid;
+      place-items:center;
     }
-    .itinerary-pill strong{display:block}
-    .itinerary-pill span{font-size:13px;color:var(--muted)}
+    .itinerary-fab:hover{transform:translateY(-1px)}
+    .itinerary-fab:active{transform:translateY(0)}
     .hotspot{
       position:absolute;
       border:0;
       background:transparent;
       cursor:pointer;
       border-radius:999px;
+    }
+    .hotspot-chip{
+      position:absolute;
+      left:0;
+      top:-24px;
+      background:rgba(8,116,216,.96);
+      color:#fff;
+      border-radius:999px;
+      padding:4px 8px;
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 6px 14px rgba(0,0,0,.2);
+      pointer-events:none;
     }
     .pin-dark{left:31%;top:29%;width:25%;height:15%}
     .pin-nintendo{left:7%;top:40%;width:28%;height:15%}
@@ -300,6 +399,51 @@
     .detail{background:var(--soft);padding:12px;border-radius:14px;font-size:13px}
     .detail b{display:block;font-size:14px;margin-bottom:3px}
     .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .ride-swipe-wrap{margin-top:12px}
+    .ride-swipe-title{
+      margin:0 0 6px;
+      font-size:13px;
+      color:#4e5b70;
+      font-weight:800;
+    }
+    .ride-swipe-hint{
+      margin:0 0 8px;
+      font-size:12px;
+      color:#758198;
+    }
+    .ride-swipe{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      padding-bottom:4px;
+    }
+    .ride-swipe::-webkit-scrollbar{height:6px}
+    .ride-swipe::-webkit-scrollbar-thumb{background:#c9d5e2;border-radius:999px}
+    .ride-card{
+      min-width:88%;
+      scroll-snap-align:start;
+      background:#f4f8fc;
+      border:1px solid #d9e5f1;
+      border-radius:14px;
+      padding:10px;
+    }
+    .ride-card h4{margin:0 0 6px;font-size:14px}
+    .ride-card p{margin:0;font-size:12px;color:#5f6d83;line-height:1.3}
+    .ride-card-meta{
+      margin-top:8px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .ride-card-meta span{
+      background:#ffffff;
+      border:1px solid #d7e4f0;
+      border-radius:8px;
+      padding:5px 6px;
+      font-size:11px;
+      color:#425067;
+    }
     .close{
       position:absolute;right:18px;top:14px;border:0;background:#edf0f4;width:34px;height:34px;border-radius:50%;
       font-size:18px;cursor:pointer;
@@ -336,29 +480,121 @@
       margin-bottom:16px;
     }
     .timeline{display:grid;gap:12px}
+    .itinerary-actions{
+      padding-top:18px;
+      margin-top:14px;
+    }
+    .itinerary-edit{
+      width:100%;
+      border:0;
+      background:#e9eef4;
+      color:#1d2a3a;
+      font-weight:800;
+      border-radius:14px;
+      padding:14px 16px;
+      cursor:pointer;
+    }
+    .feedback-backdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      z-index:20;
+    }
+    .feedback-backdrop.open{opacity:1;pointer-events:auto}
+    .feedback-modal{
+      position:absolute;
+      left:16px;
+      right:16px;
+      top:50%;
+      transform:translateY(-45%);
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 14px 36px rgba(0,0,0,.24);
+      padding:16px;
+      z-index:21;
+      display:none;
+    }
+    .feedback-modal.open{display:block}
+    .feedback-modal h3{margin:0 0 8px;font-size:18px}
+    .feedback-modal p{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.35}
+    .feedback-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .feedback-option{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:10px 8px;
+      cursor:pointer;
+      text-align:center;
+      font-weight:700;
+      font-size:13px;
+    }
+    .feedback-option.selected{
+      border-color:var(--blue);
+      background:#edf6ff;
+      color:#075da9;
+    }
+    .feedback-actions{display:flex;gap:8px;margin-top:12px}
+    .feedback-actions button{flex:1}
     .stop{
       background:#fff;
       border-radius:18px;
       padding:15px;
       box-shadow:0 7px 18px rgba(0,0,0,.07);
       display:grid;
-      grid-template-columns:64px 1fr;
+      grid-template-columns:22px 64px 1fr;
       gap:12px;
+      align-items:start;
     }
     .time{
       font-weight:850;
       color:#075da9;
     }
     .stop h3{margin:0 0 4px;font-size:17px}
+    .stop-check{
+      width:18px;
+      height:18px;
+      margin-top:4px;
+      accent-color:var(--blue);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
     .stop p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
+    .stop-meta{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
     .stop .tag{
       display:inline-block;
-      margin-top:8px;
       background:#f0f4f8;
       padding:5px 8px;
       border-radius:999px;
       font-size:12px;
       font-weight:700;
+    }
+    .reserve-btn{
+      border:1px solid #b8d3ef;
+      background:#fff;
+      color:#075da9;
+      padding:5px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .reserve-btn:disabled{
+      cursor:not-allowed;
+      opacity:.55;
+    }
+    .reserve-btn.reserved{
+      border-color:#b8e7ca;
+      color:var(--success);
+      background:#effaf3;
     }
 
     /* Chat */
@@ -391,93 +627,188 @@
 <body>
   <main class="app">
 
-    <section class="view questionnaire active" id="questionnaireView">
+    <section class="view questionnaire" id="questionnaireView">
       <div class="brand">
         <small>ACCESSIBLE PARK PLANNER</small>
         <h1>Let’s plan your park day</h1>
-        <p>Answer a few quick questions and we’ll generate a lower-stress itinerary around your group’s needs.</p>
+        <p>Answer these planning questions and we’ll build an accessibility-focused itinerary around your group and park priorities.</p>
       </div>
 
       <div class="progress-wrap" id="progress"></div>
 
       <div class="card">
         <div class="step active" data-step="0">
-          <h2>Who are you visiting with?</h2>
-          <p>This helps us choose pacing, breaks, and attraction types.</p>
-          <div class="choice-grid" data-key="group">
-            <button class="choice" data-value="Solo"><strong>Solo</strong><span>One guest</span></button>
-            <button class="choice" data-value="Adults"><strong>Adults</strong><span>Adult group</span></button>
-            <button class="choice" data-value="Family"><strong>Family</strong><span>Adults and children</span></button>
-            <button class="choice" data-value="Caregiver group"><strong>Caregiver group</strong><span>Guest with support person</span></button>
+          <h2>Section 1: Your Park Visit</h2>
+          <p>Choose the parks you want to visit and whether your itinerary should include travel time between parks.</p>
+          <div class="field">
+            <label>1. Which parks are you planning to visit today?</label>
+            <div class="choice-grid multi" data-key="parks">
+              <button class="choice" data-value="Universal Studios Florida"><strong>Universal Studios Florida</strong><span>Movie rides and shows</span></button>
+              <button class="choice" data-value="Islands of Adventure"><strong>Islands of Adventure</strong><span>Thrill rides and themed lands</span></button>
+              <button class="choice" data-value="Epic Universe"><strong>Epic Universe</strong><span>New lands and headline attractions</span></button>
+              <button class="choice" data-value="Volcano Bay"><strong>Volcano Bay</strong><span>Water attractions and relaxation areas</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="includeTravel">2. Would you like your itinerary to include travel time between parks?</label>
+            <select id="includeTravel" data-answer-key="includeTravel">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
           </div>
         </div>
 
         <div class="step" data-step="1">
-          <h2>What mobility support is needed?</h2>
-          <p>Select the closest match. You can still change individual stops later.</p>
-          <div class="choice-grid" data-key="mobility">
-            <button class="choice" data-value="No mobility limitations"><strong>No limitations</strong><span>Standard routes are okay</span></button>
-            <button class="choice" data-value="Reduce walking"><strong>Reduce walking</strong><span>Group nearby stops</span></button>
-            <button class="choice" data-value="Wheelchair or scooter"><strong>Wheelchair or scooter</strong><span>Prioritize accessible routes</span></button>
-            <button class="choice" data-value="Frequent seating"><strong>Frequent seating</strong><span>Add more rest stops</span></button>
-          </div>
+          <h2>Selected Park Details</h2>
+          <div id="parkPlanningFields"></div>
+          <p class="helper-text">Each park needs a planned time and at least one must-do ride before you continue.</p>
         </div>
 
         <div class="step" data-step="2">
-          <h2>How should we handle sensory needs?</h2>
-          <p>We can space out loud or intense experiences and add quiet breaks.</p>
-          <div class="choice-grid" data-key="sensory">
-            <button class="choice" data-value="No sensory limits"><strong>No limits</strong><span>Any intensity is okay</span></button>
-            <button class="choice" data-value="Avoid flashing lights"><strong>Avoid flashing</strong><span>Reduce strobe-heavy attractions</span></button>
-            <button class="choice" data-value="Avoid loud attractions"><strong>Avoid loud rides</strong><span>Prefer calmer experiences</span></button>
-            <button class="choice" data-value="Add quiet breaks"><strong>Quiet breaks</strong><span>Schedule decompression time</span></button>
-          </div>
-        </div>
-
-        <div class="step" data-step="3">
-          <h2>What are your must-dos?</h2>
-          <p>Pick as many as you like. We will build the route around these lands.</p>
-          <div class="choice-grid multi" data-key="mustDos">
-            <button class="choice" data-value="Super Nintendo World"><strong>Nintendo</strong><span>Interactive and colorful</span></button>
-            <button class="choice" data-value="Ministry of Magic"><strong>Harry Potter</strong><span>Highly themed experience</span></button>
-            <button class="choice" data-value="Isle of Berk"><strong>Isle of Berk</strong><span>Family-friendly area</span></button>
-            <button class="choice" data-value="Dark Universe"><strong>Dark Universe</strong><span>High-intensity area</span></button>
-          </div>
-        </div>
-
-        <div class="step" data-step="4">
-          <h2>Timing and breaks</h2>
-          <p>Choose your arrival time and how often you want a break.</p>
+          <h2>Section 2: About Your Visit</h2>
+          <p>Tell us about your group and the overall shape of the visit.</p>
           <div class="field">
-            <label for="arrival">Arrival time</label>
-            <select id="arrival">
+            <label for="groupSize">1. How many people are in your group?</label>
+            <input id="groupSize" type="number" min="1" placeholder="Enter group size" data-answer-key="groupSize" />
+          </div>
+          <div class="field">
+            <label for="firstVisit">2. Is this your first time visiting Universal Parks?</label>
+            <select id="firstVisit" data-answer-key="firstVisit">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="overallStay">3. How long do you plan to stay in the park overall?</label>
+            <select id="overallStay" data-answer-key="overallStay">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Less than 4 hours">Less than 4 hours</option>
+              <option value="Half a day">Half a day</option>
+              <option value="Most of the day">Most of the day</option>
+              <option value="Full day">Full day</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="arrival">Planned arrival time</label>
+            <select id="arrival" data-answer-key="arrival">
               <option value="9:00 AM">9:00 AM</option>
               <option value="10:00 AM">10:00 AM</option>
               <option value="11:00 AM">11:00 AM</option>
               <option value="12:00 PM">12:00 PM</option>
             </select>
           </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <h2>Section 3: Mobility Needs</h2>
+          <p>These answers help us choose more accessible routes and realistic timing.</p>
           <div class="field">
-            <label>Break frequency</label>
-            <div class="range-row" data-key="breaks">
-              <button data-value="Every 60 minutes">60 min</button>
-              <button data-value="Every 90 minutes">90 min</button>
-              <button data-value="As needed">As needed</button>
-            </div>
+            <label for="wheelchairUse">1. Do you use a wheelchair or mobility device?</label>
+            <select id="wheelchairUse" data-answer-key="wheelchairUse">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
           </div>
-          <div class="field">
-            <label for="meal">Meal preference</label>
-            <select id="meal">
-              <option value="Lunch around 12:30 PM">Lunch around 12:30 PM</option>
-              <option value="Lunch around 1:30 PM">Lunch around 1:30 PM</option>
-              <option value="No planned meal">No planned meal</option>
+          <div class="field conditional-field" id="wheelchairTypeField" hidden>
+            <label for="wheelchairType">2. Do you use a manual or electric wheelchair?</label>
+            <select id="wheelchairType" data-answer-key="wheelchairType">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Manual wheelchair">Manual wheelchair</option>
+              <option value="Electric wheelchair">Electric wheelchair</option>
+              <option value="Scooter">Scooter</option>
+            </select>
+          </div>
+          <div class="field conditional-field" id="transferPreferenceField" hidden>
+            <label for="transferPreference">3. Do you transfer out of your wheelchair for rides or stay seated?</label>
+            <select id="transferPreference" data-answer-key="transferPreference">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Transfer to ride vehicle">Transfer to ride vehicle</option>
+              <option value="Remain seated when possible">Remain seated when possible</option>
+            </select>
+          </div>
+          <div class="field conditional-field" id="boardingTimeField" hidden>
+            <label for="boardingTime">4. Do you need extra time when boarding and exiting rides?</label>
+            <select id="boardingTime" data-answer-key="boardingTime">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
             </select>
           </div>
         </div>
 
-        <div class="step" data-step="5">
-          <h2>Ready to generate your itinerary?</h2>
-          <p>We’ll prioritize your must-dos, reduce backtracking, and insert accessibility-friendly breaks.</p>
+        <div class="step" data-step="4">
+          <h2>Section 4: Ride Preferences</h2>
+          <p>Use these preferences to shape the ride pacing and intensity.</p>
+          <div class="field">
+            <label for="mildMovement">1. Are you comfortable with rides that have mild movement or vibration?</label>
+            <select id="mildMovement" data-answer-key="mildMovement">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="avoidIntense">2. Do you want to avoid rides with sudden drops or intense motion?</label>
+            <select id="avoidIntense" data-answer-key="avoidIntense">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="indoorPreference">3. Do you prefer indoor rides over outdoor rides?</label>
+            <select id="indoorPreference" data-answer-key="indoorPreference">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Prefer indoor rides">Prefer indoor rides</option>
+              <option value="No preference">No preference</option>
+              <option value="Prefer outdoor rides">Prefer outdoor rides</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="step" data-step="6">
+          <h2>Section 5: Companion Info</h2>
+          <p>Let us know if anyone else in the group affects how the plan should be paced.</p>
+          <div class="field">
+            <label for="caregiverCompanion">1. Are you visiting with a caregiver or companion?</label>
+            <select id="caregiverCompanion" data-answer-key="caregiverCompanion">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="additionalNeeds">2. Does anyone else in your group have accessibility needs?</label>
+            <select id="additionalNeeds" data-answer-key="additionalNeeds">
+              <option value="">Select an option</option>
+              <option value="Prefer not to answer">Prefer not to answer</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="field conditional-field" id="additionalNeedsDetailsField" hidden>
+            <label for="additionalNeedsDetails">Tell us about the additional accessibility needs.</label>
+            <textarea id="additionalNeedsDetails" placeholder="Optional details to help shape the itinerary" data-answer-key="additionalNeedsDetails"></textarea>
+          </div>
+        </div>
+
+        <div class="step" data-step="8">
+          <h2>Review Your Answers</h2>
+          <p>Check the details below before generating your itinerary.</p>
           <div class="summary-box" id="summaryBox"></div>
         </div>
 
@@ -488,9 +819,8 @@
       </div>
     </section>
 
-    <section class="view" id="mapView">
-      <img class="screen-img" src="assets/park-screen.jpg" alt="Park map"/>
-      <button class="start-over" id="startOver">Edit answers</button>
+    <section class="view active" id="mapView">
+      <img class="screen-img" id="mapImage" src="main page.PNG" alt="Park map"/>
       <button class="hotspot pin-dark" data-id="dark" aria-label="Dark Universe"></button>
       <button class="hotspot pin-nintendo" data-id="nintendo" aria-label="Super Nintendo World"></button>
       <button class="hotspot pin-potter" data-id="potter" aria-label="Ministry of Magic"></button>
@@ -498,10 +828,7 @@
       <button class="hotspot pin-celestial" data-id="celestial" aria-label="Celestial Park"></button>
 
       <button class="ai" id="aiBtn" aria-label="Open accessibility assistant">✦</button>
-      <button class="itinerary-pill" id="openItinerary">
-        <strong id="itineraryTitle">Your itinerary is ready</strong>
-        <span id="itinerarySubtitle">Tap to view your personalized schedule</span>
-      </button>
+      <button class="itinerary-fab" id="openItinerary" aria-label="Open itinerary" title="Open itinerary">📅</button>
       <div class="toast" id="toast"></div>
 
       <div class="backdrop" id="backdrop"></div>
@@ -525,6 +852,11 @@
         <div class="actions">
           <button class="btn secondary" id="directions">Get directions</button>
           <button class="btn primary" id="addBtn">Add to itinerary</button>
+        </div>
+        <div class="ride-swipe-wrap" id="rideSwipeWrap" hidden>
+          <p class="ride-swipe-title">Rides in this area</p>
+          <p class="ride-swipe-hint">Swipe left or right to view all rides</p>
+          <div class="ride-swipe" id="rideSwipe"></div>
         </div>
       </section>
 
@@ -552,19 +884,127 @@
       </div>
       <div class="plan-note" id="planNote"></div>
       <div class="timeline" id="timeline"></div>
+      <div class="itinerary-actions">
+        <button class="itinerary-edit" id="startOver">Edit answers</button>
+      </div>
+    </section>
+
+    <div class="feedback-backdrop" id="feedbackBackdrop"></div>
+    <section class="feedback-modal" id="feedbackModal" aria-label="Wheelchair recommendation feedback">
+      <h3>Wheelchair recommendation</h3>
+      <p id="feedbackPrompt"></p>
+      <div class="feedback-options" id="feedbackOptions">
+        <button class="feedback-option" data-score="1">Not likely</button>
+        <button class="feedback-option" data-score="2">Slightly likely</button>
+        <button class="feedback-option" data-score="3">Maybe</button>
+        <button class="feedback-option" data-score="4">Likely</button>
+        <button class="feedback-option" data-score="5">Very likely</button>
+      </div>
+      <div class="feedback-actions">
+        <button class="btn secondary" id="feedbackSkip">Skip</button>
+        <button class="btn primary" id="feedbackSave">Save feedback</button>
+      </div>
     </section>
 
   </main>
 
 <script>
   const answers = {
-    group: "",
-    mobility: "",
-    sensory: "",
-    mustDos: [],
-    breaks: "",
+    parks: [],
+    parkTimes: {},
+    parkRides: {},
+    wheelchairFriendlyOnly: {},
+    childrenFriendlyOnly: {},
+    includeTravel: "",
+    groupSize: "",
+    firstVisit: "",
+    overallStay: "",
+    wheelchairUse: "",
+    wheelchairType: "",
+    transferPreference: "",
+    boardingTime: "",
+    mildMovement: "",
+    avoidIntense: "",
+    indoorPreference: "",
+    avoidCrowds: "",
+    restroomStops: "",
+    diningOptions: "",
+    caregiverCompanion: "",
+    additionalNeeds: "",
+    additionalNeedsDetails: "",
+    aiChatbot: "",
     arrival: "9:00 AM",
+    breaks: "As needed",
     meal: "Lunch around 12:30 PM"
+  };
+
+  const estimatedRideWaits = {
+    "Post-lunch highlighted ride": 45
+  };
+  const maxMustDoRidesPerPark = 3;
+  const epicUniverseFixedOptions = [
+    { name: "Dragon Racer's Rally", score: "2/5" },
+    { name: "Harry Potter and the Battle at the Ministry", score: "1/5" },
+    { name: "Hiccup's Wing Gliders", score: "4/5" },
+  ];
+  const islandsOfAdventureFixedOptions = [
+    { name: "Jurassic World Roller Coaster", score: "1/5" },
+    { name: "Jurassic Park River Adventure", score: "2/5" },
+    { name: "Skull Island: Reign of Kong", score: "3/5" },
+    { name: "Dudley Do-Right's Ripsaw Falls", score: "2/5" },
+  ];
+  const universalStudiosFloridaFixedOptions = [
+    { name: "Hogwarts Express - King's Cross Station", score: "4/5" },
+    { name: "Harry Potter and the Escape from Gringotts", score: "2/5" },
+    { name: "Men in Black Alien Attack", score: "4/5" },
+  ];
+  const ridePhotoByName = {
+    "Super Nintendo World": "super nintendo world.jpg",
+    "How to Train Your Dragon": "how to train your dragon.jpg",
+    "The Wizarding World of Harry Potter": "the wizarding world of harry potter.jpg",
+    "Dark Universe": "dark universe.jpg",
+  };
+
+  const parkScreenImages = {
+    "Universal Studios Florida": "park-screen.jpg",
+    "Islands of Adventure": "island of adv.jpg",
+    "Epic Universe": "epic uni.PNG",
+    "Volcano Bay": "volcano bay.PNG",
+  };
+
+  const parkRideAccessibility = {
+    "Epic Universe": [
+      { name:"Dragon Racer's Rally", score:"2/5" },
+      { name:"Harry Potter and the Battle at the Ministry", score:"1/5" },
+      { name:"Hiccup's Wing Gliders", score:"4/5" }
+    ],
+    "Universal Studios Florida": [
+      { name:"Hogwarts Express - King's Cross Station", score:"4/5" },
+      { name:"Harry Potter and the Escape from Gringotts", score:"2/5" },
+      { name:"Men in Black Alien Attack", score:"4/5" }
+    ],
+    "Islands of Adventure": [
+      { name:"Jurassic World Roller Coaster", score:"1/5" },
+      { name:"Jurassic Park River Adventure", score:"2/5" },
+      { name:"Skull Island: Reign of Kong", score:"3/5" },
+      { name:"Dudley Do-Right's Ripsaw Falls", score:"2/5" }
+    ],
+    "Volcano Bay": [
+      { name:"Krakatau Aqua Coaster", score:"3/5" },
+      { name:"Ko'okiri Body Plunge", score:"1/5" },
+      { name:"Kala and Tai Nui Serpentine Body Slides", score:"4/5" },
+      { name:"TeAwa The Fearless River", score:"4/5" },
+      { name:"Honu of Honu ika Moana", score:"2/5" },
+      { name:"Ika Moana of Honu ika Moana", score:"3/5" },
+      { name:"Maku of Maku Puihi Round Raft Rides", score:"3/5" },
+      { name:"Puihi of Maku Puihi Round Raft Rides", score:"2/5" },
+      { name:"Ohyah of Ohyah and Ohno Drop Slides", score:"2/5" },
+      { name:"Ohno of Ohyah and Ohno Drop Slides", score:"2/5" },
+      { name:"Punga Racers", score:"3/5" },
+      { name:"Taniwha Tubes", score:"4/5" },
+      { name:"Kopiko Wai Winding River", score:"5/5" },
+      { name:"Runamukka Reef", score:"5/5" }
+    ]
   };
 
   const attractions = {
@@ -572,7 +1012,31 @@
     nintendo:{name:"Super Nintendo World",land:"Interactive gaming area",score:"Accessibility 3/5",wait:"35 min wait",status:"Open",description:"A colorful, interactive land with several attractions, stairs in some areas, and frequent sensory stimulation.",mobility:"Step-free routes available",sensory:"Medium to high",transfer:"Varies by attraction",restroom:"About 3 minutes"},
     potter:{name:"Ministry of Magic",land:"Wizarding World",score:"Accessibility 1/5",wait:"65 min wait",status:"Open",description:"A richly themed attraction with motion, enclosed spaces, audio effects, and extended queue sections.",mobility:"Accessible entrance available",sensory:"High",transfer:"Likely required",restroom:"About 5 minutes"},
     berk:{name:"Isle of Berk",land:"How to Train Your Dragon",score:"Accessibility 4/5",wait:"20 min wait",status:"Open",description:"A family-focused land with wide paths, outdoor experiences, and several lower-intensity options.",mobility:"Wide paths and accessible viewing",sensory:"Low to medium",transfer:"Varies by attraction",restroom:"About 2 minutes"},
-    celestial:{name:"Celestial Park",land:"Central park area",score:"Accessibility 3/5",wait:"10 min nearby",status:"Open",description:"The central hub with dining, fountains, seating, and routes to the surrounding lands.",mobility:"Mostly level routes",sensory:"Low to medium",transfer:"Not applicable",restroom:"About 1 minute"}
+    celestial:{name:"Celestial Park",land:"Central park area",score:"Accessibility 3/5",wait:"10 min nearby",status:"Open",description:"The central hub with dining, fountains, seating, and routes to the surrounding lands.",mobility:"Mostly level routes",sensory:"Low to medium",transfer:"Not applicable",restroom:"About 1 minute"},
+    toonLagoon:{name:"Toon Lagoon",land:"Islands of Adventure",score:"Accessibility 2/5",wait:"45 min typical",status:"Open",description:"Featured ride: Dudley Do-Right's Ripsaw Falls. Environment: mostly outdoor with water effects. Sound level: loud during splash zones.",mobility:"Accessible queue sections; transfer to ride vehicle required",sensory:"High (loud water effects)",transfer:"Required",restroom:"About 3 minutes"},
+    skullIsland:{name:"Skull Island: Reign of Kong",land:"Islands of Adventure",score:"Accessibility 3/5",wait:"35 min typical",status:"Open",description:"Dark-ride style attraction in an enclosed environment. Environment: indoor. Sound level: loud with creature effects and vehicle audio.",mobility:"Accessible entrance and queue available",sensory:"High (loud + dark scenes)",transfer:"May be required",restroom:"About 4 minutes"},
+    jurassicPark:{name:"Jurassic Park",land:"Islands of Adventure",score:"Accessibility varies",wait:"35-50 min typical",status:"Open",description:"Jurassic Park includes multiple attractions with different sensory and mobility needs.",mobility:"Accessible queues available for both rides",sensory:"Medium to high",transfer:"Ride vehicle transfer expected",restroom:"About 3 minutes",rides:[
+      { name:"Jurassic Park River Adventure", description:"Water ride with splash and final drop.", environment:"Mostly outdoor", sound:"Medium to loud", transfer:"Required" },
+      { name:"Jurassic World Roller Coaster", description:"High-speed coaster with intense motion.", environment:"Outdoor", sound:"Loud", transfer:"Required" }
+    ]},
+    berkEpic:{name:"How to Train Your Dragon - Isle of Berk",land:"Epic Universe",score:"Accessibility varies",wait:"25-45 min typical",status:"Open",description:"Berk area with family-friendly dragon-themed attractions.",mobility:"Accessible pathways and queue access in the land",sensory:"Medium",transfer:"Ride vehicle transfer expected",restroom:"About 3 minutes",rides:[
+      { name:"Hiccup's Wing Gliders", description:"Family coaster with smoother pacing than headline thrill rides.", environment:"Outdoor", sound:"Medium", transfer:"Required" },
+      { name:"Dragon Racer's Rally", description:"Spinning sky ride with variable motion and height.", environment:"Outdoor", sound:"Medium", transfer:"Required" }
+    ]},
+    ministryEpic:{name:"Harry Potter and the Battle at the Ministry",land:"Epic Universe - Ministry of Magic",score:"Accessibility 1/5",wait:"55 min typical",status:"Open",description:"Large-scale dark ride with immersive motion scenes.",mobility:"Accessible queue and entry route",sensory:"High",transfer:"Required",restroom:"About 5 minutes"}
+  };
+
+  const mapHotspotsByPark = {
+    "Epic Universe": [
+      { id:"ministryEpic", label:"Wizarding World - Flag Pole", left:"52%", top:"26%", width:"34%", height:"22%" },
+      { id:"berkEpic", label:"How to Train Your Dragon", left:"31%", top:"22%", width:"18%", height:"24%" },
+      { id:"ministryEpic", label:"Wizarding World - Ministry of Magic", left:"46%", top:"41%", width:"40%", height:"17%" },
+    ],
+    "Islands of Adventure": [
+      { id:"toonLagoon", label:"Toon Lagoon", left:"39%", top:"58%", width:"34%", height:"16%" },
+      { id:"skullIsland", label:"Skull Island: Reign of Kong", left:"12%", top:"37%", width:"28%", height:"16%" },
+      { id:"jurassicPark", label:"Jurassic Park", left:"63%", top:"31%", width:"30%", height:"19%" },
+    ],
   };
 
   let currentStep = 0;
@@ -582,7 +1046,29 @@
   const progress = document.getElementById("progress");
   const questionnaireView = document.getElementById("questionnaireView");
   const mapView = document.getElementById("mapView");
+  const mapImage = document.getElementById("mapImage");
+  const mapHotspots = [...document.querySelectorAll(".hotspot")];
   const itineraryView = document.getElementById("itineraryView");
+  const parkPlanningFields = document.getElementById("parkPlanningFields");
+  const timelineEl = document.getElementById("timeline");
+  const feedbackBackdrop = document.getElementById("feedbackBackdrop");
+  const feedbackModal = document.getElementById("feedbackModal");
+  const feedbackPrompt = document.getElementById("feedbackPrompt");
+  const feedbackOptions = document.getElementById("feedbackOptions");
+  const rideSwipeWrap = document.getElementById("rideSwipeWrap");
+  const rideSwipe = document.getElementById("rideSwipe");
+  const rideOptionsCacheKey = "ride-options-cache-v1";
+  let aiPlanNote = "";
+  let rideOptionsByPark = {};
+  let rideOptionsLoading = false;
+  let rideOptionsError = "";
+  let currentParkDetailIndex = 0;
+  const checkedStops = new Set(JSON.parse(localStorage.getItem("checkedStops") || "[]"));
+  const reservedStops = new Set(JSON.parse(localStorage.getItem("reservedStops") || "[]"));
+  const wheelchairFeedback = JSON.parse(localStorage.getItem("wheelchairFeedback") || "{}");
+  let feedbackTargetKey = "";
+  let feedbackTargetTitle = "";
+  let selectedFeedbackScore = "";
 
   for(let i=0;i<steps.length;i++){
     const dot=document.createElement("div");
@@ -603,17 +1089,404 @@
     updateProgress();
   }
 
+  function mobilitySummary(){
+    if(answers.wheelchairUse !== "Yes") return "No wheelchair or mobility device";
+
+    const parts = [answers.wheelchairType || "Wheelchair or mobility device"];
+    if(answers.transferPreference) parts.push(answers.transferPreference);
+    if(answers.boardingTime === "Yes") parts.push("Needs extra boarding time");
+    return parts.join("; ");
+  }
+
+  function ridePreferenceSummary(){
+    const parts = [];
+    if(answers.mildMovement) parts.push(`Mild movement: ${answers.mildMovement}`);
+    if(answers.avoidIntense) parts.push(`Avoid intense motion: ${answers.avoidIntense}`);
+    if(answers.indoorPreference) parts.push(answers.indoorPreference);
+    return parts.length ? parts.join(" • ") : "Not selected";
+  }
+
+  function updateConditionalFields(){
+    const wheelchairActive = answers.wheelchairUse === "Yes";
+    document.getElementById("wheelchairTypeField").hidden = !wheelchairActive;
+    document.getElementById("transferPreferenceField").hidden = !wheelchairActive;
+    document.getElementById("boardingTimeField").hidden = !wheelchairActive;
+
+    if(!wheelchairActive){
+      answers.wheelchairType = "";
+      answers.transferPreference = "";
+      answers.boardingTime = "";
+      document.getElementById("wheelchairType").value = "";
+      document.getElementById("transferPreference").value = "";
+      document.getElementById("boardingTime").value = "";
+    }
+
+    const needsDetails = answers.additionalNeeds === "Yes";
+    document.getElementById("additionalNeedsDetailsField").hidden = !needsDetails;
+    if(!needsDetails){
+      answers.additionalNeedsDetails = "";
+      document.getElementById("additionalNeedsDetails").value = "";
+    }
+  }
+
+  function applyChatbotPreference(){
+    document.getElementById("aiBtn").style.display = answers.aiChatbot === "No" ? "none" : "grid";
+  }
+
   function renderSummary(){
-    const must = answers.mustDos.length ? answers.mustDos.join(", ") : "No specific must-dos";
+    const parks = answers.parks.length ? answers.parks.join(", ") : "Not selected";
+    const parkTimes = answers.parks.length
+      ? answers.parks.map(park=>`${park}: ${answers.parkTimes[park] || "Not set"}`).join("<br>")
+      : "Not selected";
+    const rides = answers.parks.length
+      ? answers.parks.map(park=>`${park}: ${(answers.parkRides[park] || []).join(", ") || "Not set"}`).join("<br>")
+      : "Not selected";
     document.getElementById("summaryBox").innerHTML = `
-      <b>Group:</b> ${answers.group || "Not selected"}<br>
-      <b>Mobility:</b> ${answers.mobility || "Not selected"}<br>
-      <b>Sensory:</b> ${answers.sensory || "Not selected"}<br>
-      <b>Must-dos:</b> ${must}<br>
+      <b>Parks:</b> ${parks}<br>
+      <b>Time by park:</b><br>${parkTimes}<br>
+      <b>Priority rides:</b><br>${rides}<br>
+      <b>Include travel time:</b> ${answers.includeTravel || "Not selected"}<br>
+      <b>Group size:</b> ${answers.groupSize || "Not selected"}<br>
+      <b>First visit:</b> ${answers.firstVisit || "Not selected"}<br>
+      <b>Overall stay:</b> ${answers.overallStay || "Not selected"}<br>
+      <b>Mobility:</b> ${mobilitySummary()}<br>
+      <b>Ride preferences:</b> ${ridePreferenceSummary()}<br>
+      <b>Caregiver or companion:</b> ${answers.caregiverCompanion || "Not selected"}<br>
+      <b>Additional accessibility needs:</b> ${answers.additionalNeeds || "Not selected"}${answers.additionalNeedsDetails ? ` - ${answers.additionalNeedsDetails}` : ""}<br>
       <b>Arrival:</b> ${answers.arrival}<br>
-      <b>Breaks:</b> ${answers.breaks || "As needed"}<br>
+      <b>Breaks:</b> ${answers.breaks}<br>
       <b>Meal:</b> ${answers.meal}
     `;
+  }
+
+  function pruneParkAnswers(){
+    Object.keys(answers.parkTimes).forEach(park=>{
+      if(!answers.parks.includes(park)) delete answers.parkTimes[park];
+    });
+    Object.keys(answers.parkRides).forEach(park=>{
+      if(!answers.parks.includes(park)) delete answers.parkRides[park];
+    });
+    Object.keys(answers.wheelchairFriendlyOnly).forEach(park=>{
+      if(!answers.parks.includes(park)) delete answers.wheelchairFriendlyOnly[park];
+    });
+    Object.keys(answers.childrenFriendlyOnly).forEach(park=>{
+      if(!answers.parks.includes(park)) delete answers.childrenFriendlyOnly[park];
+    });
+    currentParkDetailIndex = Math.min(currentParkDetailIndex, Math.max(answers.parks.length - 1, 0));
+  }
+
+  function updateMapImage(){
+    if(!mapImage) return;
+    const firstSelectedPark = answers.parks[0];
+    mapImage.src = parkScreenImages[firstSelectedPark] || "main page.PNG";
+    updateMapHotspots();
+  }
+
+  function updateMapHotspots(){
+    const firstSelectedPark = answers.parks[0];
+    const config = mapHotspotsByPark[firstSelectedPark] || [];
+
+    mapHotspots.forEach((btn,index)=>{
+      const hotspot = config[index];
+      if(!hotspot){
+        btn.style.display = "none";
+        btn.dataset.id = "";
+        btn.innerHTML = "";
+        return;
+      }
+
+      btn.style.display = "block";
+      btn.dataset.id = hotspot.id;
+      btn.setAttribute("aria-label", hotspot.label);
+      btn.style.left = hotspot.left;
+      btn.style.top = hotspot.top;
+      btn.style.width = hotspot.width;
+      btn.style.height = hotspot.height;
+      btn.innerHTML = "";
+    });
+  }
+
+  function friendlyRideOptionsError(message){
+    if(!message) return "";
+    if(message.includes("OPENAI_API_KEY")){
+      return "AI ride suggestions are not available right now. Choose from the built-in ride options for each selected park.";
+    }
+    return "AI ride suggestions could not be loaded. Choose from the built-in ride options for each selected park.";
+  }
+
+  function getAvailableRideOptionsForPark(park){
+    if(park === "Epic Universe"){
+      return epicUniverseFixedOptions.map((ride)=>(
+        {
+          name: ride.name,
+          category: "family",
+          intensity: "medium",
+          environment: "mixed",
+          transferSupport: `Accessibility ${ride.score}`,
+          accessibilityNote: `Accessibility score ${ride.score}`,
+          waitMinutes: 40,
+          score: ride.score,
+        }
+      ));
+    }
+
+    if(park === "Islands of Adventure"){
+      return islandsOfAdventureFixedOptions.map((ride)=>(
+        {
+          name: ride.name,
+          category: "family",
+          intensity: "medium",
+          environment: "mixed",
+          transferSupport: `Accessibility ${ride.score}`,
+          accessibilityNote: `Accessibility score ${ride.score}`,
+          waitMinutes: 40,
+          score: ride.score,
+        }
+      ));
+    }
+
+    if(park === "Universal Studios Florida"){
+      return universalStudiosFloridaFixedOptions.map((ride)=>(
+        {
+          name: ride.name,
+          category: "family",
+          intensity: "medium",
+          environment: "mixed",
+          transferSupport: `Accessibility ${ride.score}`,
+          accessibilityNote: `Accessibility score ${ride.score}`,
+          waitMinutes: 40,
+          score: ride.score,
+        }
+      ));
+    }
+
+    const aiOptions = rideOptionsByPark[park] || [];
+    if(aiOptions.length) return aiOptions;
+
+    return (parkRideAccessibility[park] || []).map((ride)=>({
+      name: ride.name,
+      category: "reference",
+      intensity: "varies",
+      environment: "mixed",
+      transferSupport: `Accessibility ${ride.score}`,
+      accessibilityNote: `Accessibility score ${ride.score}`,
+      waitMinutes: 40,
+      score: ride.score,
+    }));
+  }
+
+  function getAccessibilityScoreForRide(park, ride){
+    if(ride.score) return ride.score;
+    const matched = (parkRideAccessibility[park] || []).find((item)=>item.name === ride.name);
+    return matched?.score || "Not rated";
+  }
+
+  function getCurrentParkDetail(){
+    return answers.parks[currentParkDetailIndex] || "";
+  }
+
+  function getRidePhotoForName(rideName, park){
+    return ridePhotoByName[rideName] || parkScreenImages[park] || "";
+  }
+
+  function isWheelchairFriendlyRide(park, ride){
+    const scoreText = getAccessibilityScoreForRide(park, ride);
+    const numericScore = Number(String(scoreText).split("/")[0]);
+    if(Number.isFinite(numericScore)) return numericScore >= 3;
+
+    const notes = `${ride.transferSupport || ""} ${ride.accessibilityNote || ""}`.toLowerCase();
+    return /accessible|wheelchair|remain seated|step-free/.test(notes);
+  }
+
+  function isChildrenFriendlyRide(park, ride){
+    const intensity = String(ride.intensity || "").toLowerCase();
+    if(intensity === "high") return false;
+
+    const category = String(ride.category || "").toLowerCase();
+    if(category === "thrill" || category === "coaster") return false;
+
+    const scoreText = getAccessibilityScoreForRide(park, ride);
+    const numericScore = Number(String(scoreText).split("/")[0]);
+    if(Number.isFinite(numericScore)) return numericScore >= 3;
+
+    return true;
+  }
+
+  function getDisplayedRideOptionsForPark(park){
+    let options = getAvailableRideOptionsForPark(park);
+    if(answers.wheelchairFriendlyOnly[park]){
+      options = options.filter((ride)=>isWheelchairFriendlyRide(park, ride));
+    }
+    if(answers.childrenFriendlyOnly[park]){
+      options = options.filter((ride)=>isChildrenFriendlyRide(park, ride));
+    }
+    return options;
+  }
+
+  function renderParkPlanningFields(){
+    if(!answers.parks.length){
+      parkPlanningFields.innerHTML = "";
+      return;
+    }
+    if(rideOptionsLoading){
+      parkPlanningFields.innerHTML = '<p class="helper-text">Loading ride options for your selected parks...</p>';
+      return;
+    }
+
+    const park = getCurrentParkDetail();
+    if(!park){
+      parkPlanningFields.innerHTML = "";
+      return;
+    }
+
+    parkPlanningFields.innerHTML = `
+      <p class="helper-text">Park ${currentParkDetailIndex + 1} of ${answers.parks.length}</p>
+      <section class="park-card">
+        <h4>${park}</h4>
+        <div class="field">
+          <label for="time-${park.replace(/\s+/g,"-").toLowerCase()}">Select planned time</label>
+          <select id="time-${park.replace(/\s+/g,"-").toLowerCase()}" data-park-time="${park}">
+            <option value="">Select planned time</option>
+            <option value="Less than 2 hours" ${answers.parkTimes[park]==="Less than 2 hours" ? "selected" : ""}>Less than 2 hours</option>
+            <option value="2-4 hours" ${answers.parkTimes[park]==="2-4 hours" ? "selected" : ""}>2-4 hours</option>
+            <option value="Half a day" ${answers.parkTimes[park]==="Half a day" ? "selected" : ""}>Half a day</option>
+            <option value="Full day" ${answers.parkTimes[park]==="Full day" ? "selected" : ""}>Full day</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Must-do rides at this park (up to ${maxMustDoRidesPerPark})</label>
+        </div>
+        <label class="park-toggle">
+          <input type="checkbox" data-wheelchair-filter-park="${park}" ${answers.wheelchairFriendlyOnly[park] ? "checked" : ""}>
+          <span>Display wheelchair-friendly</span>
+        </label>
+        <label class="park-toggle">
+          <input type="checkbox" data-children-filter-park="${park}" ${answers.childrenFriendlyOnly[park] ? "checked" : ""}>
+          <span>Display children-friendly</span>
+        </label>
+        <div class="ride-grid">
+          ${getDisplayedRideOptionsForPark(park).map(ride=>{
+            const selected = (answers.parkRides[park] || []).includes(ride.name);
+            const photo = getRidePhotoForName(ride.name, park);
+            return `<button class="ride-choice ${selected ? "selected" : ""}" data-park="${park}" data-ride="${ride.name}"><div class="ride-choice-content"><span class="ride-thumb">${photo ? `<img src="${photo}" alt="${ride.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"><span class="ride-thumb-fallback" style="display:none">🎢</span>` : `<span class="ride-thumb-fallback">🎢</span>`}</span><span class="ride-choice-text"><strong>${ride.name}</strong><small>Accessibility ${getAccessibilityScoreForRide(park, ride)}</small></span></div></button>`;
+          }).join("")}
+        </div>
+        ${(answers.wheelchairFriendlyOnly[park] || answers.childrenFriendlyOnly[park]) && !getDisplayedRideOptionsForPark(park).length ? '<p class="helper-text">No rides matched the selected filters for this park.</p>' : ''}
+        ${!(rideOptionsByPark[park] || []).length ? '<p class="helper-text">Using built-in ride options for this park.</p>' : ''}
+      </section>
+    `;
+  }
+
+  function parkPlanningComplete(park){
+    return Boolean(answers.parkTimes[park]) && (answers.parkRides[park] || []).length > 0;
+  }
+
+  function getRideOptionsCache(){
+    try{
+      const parsed = JSON.parse(sessionStorage.getItem(rideOptionsCacheKey) || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    }catch(_error){
+      return {};
+    }
+  }
+
+  function getSelectedParksCacheKey(){
+    return [...answers.parks].sort().join("|");
+  }
+
+  function writeRideOptionsCache(cache){
+    sessionStorage.setItem(rideOptionsCacheKey, JSON.stringify(cache));
+  }
+
+  function readCachedRideOptions(){
+    const cache = getRideOptionsCache();
+    return cache[getSelectedParksCacheKey()] || null;
+  }
+
+  function storeCachedRideOptions(parks){
+    const cache = getRideOptionsCache();
+    cache[getSelectedParksCacheKey()] = {
+      createdAt: Date.now(),
+      parks,
+    };
+    writeRideOptionsCache(cache);
+  }
+
+  function pruneRideSelectionsToOptions(){
+    Object.keys(answers.parkRides).forEach(park=>{
+      const validNames = new Set(getAvailableRideOptionsForPark(park).map(ride=>ride.name));
+      answers.parkRides[park] = (answers.parkRides[park] || []).filter(ride=>validNames.has(ride));
+    });
+  }
+
+  async function loadRideOptionsForSelectedParks(){
+    if(!answers.parks.length){
+      rideOptionsByPark = {};
+      rideOptionsError = "";
+      renderParkPlanningFields();
+      return;
+    }
+
+    if(location.protocol === "file:"){
+      rideOptionsByPark = {};
+      rideOptionsError = "Serve the app with npm start to load AI ride suggestions.";
+      renderParkPlanningFields();
+      return;
+    }
+
+    rideOptionsLoading = true;
+    rideOptionsError = "";
+    renderParkPlanningFields();
+
+    const cached = readCachedRideOptions();
+    if(cached && cached.parks && typeof cached.parks === "object"){
+      rideOptionsByPark = cached.parks;
+      pruneRideSelectionsToOptions();
+      rideOptionsLoading = false;
+      renderParkPlanningFields();
+      return;
+    }
+
+    try{
+      const response = await fetch("/api/ride-options",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ parks: answers.parks })
+      });
+
+      const data = await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(data.error || "Failed to load ride suggestions.");
+
+      rideOptionsByPark = data.parks && typeof data.parks === "object" ? data.parks : {};
+      storeCachedRideOptions(rideOptionsByPark);
+      pruneRideSelectionsToOptions();
+    }catch(error){
+      rideOptionsByPark = {};
+      rideOptionsError = error?.message || "Failed to load ride suggestions.";
+    }finally{
+      rideOptionsLoading = false;
+      renderParkPlanningFields();
+    }
+  }
+
+  function getRideWaitMinutes(rideTitle){
+    const matchedRide = Object.values(rideOptionsByPark)
+      .flat()
+      .find((ride)=>ride.name === rideTitle);
+
+    if(matchedRide && Number.isFinite(Number(matchedRide.waitMinutes))){
+      return Number(matchedRide.waitMinutes);
+    }
+
+    return estimatedRideWaits[rideTitle] || 40;
+  }
+
+  function parkTimesComplete(){
+    return answers.parks.every(park=>Boolean(answers.parkTimes[park]));
+  }
+
+  function parkRidesComplete(){
+    return answers.parks.every(park=>(answers.parkRides[park] || []).length>0);
   }
 
   document.querySelectorAll(".choice-grid").forEach(grid=>{
@@ -629,6 +1502,12 @@
         }else{
           answers[key]=answers[key].filter(x=>x!==val);
         }
+        if(key==="parks"){
+          pruneParkAnswers();
+          updateMapImage();
+          renderParkPlanningFields();
+          loadRideOptionsForSelectedParks();
+        }
       }else{
         [...grid.querySelectorAll(".choice")].forEach(b=>b.classList.remove("selected"));
         btn.classList.add("selected");
@@ -637,31 +1516,120 @@
     });
   });
 
-  document.querySelectorAll(".range-row").forEach(row=>{
-    row.addEventListener("click",e=>{
-      const btn=e.target.closest("button");
-      if(!btn) return;
-      [...row.querySelectorAll("button")].forEach(b=>b.classList.remove("selected"));
-      btn.classList.add("selected");
-      answers[row.dataset.key]=btn.dataset.value;
+  document.querySelectorAll("[data-answer-key]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      const key = e.target.dataset.answerKey;
+      answers[key] = e.target.value.trim();
+      if(key === "wheelchairUse" || key === "additionalNeeds") updateConditionalFields();
+      if(key === "aiChatbot") applyChatbotPreference();
     });
+
+    if(input.tagName === "TEXTAREA"){
+      input.addEventListener("input",e=>{
+        answers[e.target.dataset.answerKey] = e.target.value.trim();
+      });
+    }
   });
 
-  document.getElementById("arrival").addEventListener("change",e=>answers.arrival=e.target.value);
-  document.getElementById("meal").addEventListener("change",e=>answers.meal=e.target.value);
+  parkPlanningFields.addEventListener("change",e=>{
+    const select = e.target.closest("select[data-park-time]");
+    if(select){
+      answers.parkTimes[select.dataset.parkTime] = select.value;
+      return;
+    }
 
-  document.getElementById("nextStep").onclick=()=>{
-    if(currentStep===0 && !answers.group){alert("Please choose who you are visiting with.");return;}
-    if(currentStep===1 && !answers.mobility){alert("Please choose a mobility option.");return;}
-    if(currentStep===2 && !answers.sensory){alert("Please choose a sensory option.");return;}
-    if(currentStep===4 && !answers.breaks) answers.breaks="As needed";
+    const checkbox = e.target.closest("input[data-wheelchair-filter-park]");
+    if(checkbox){
+      answers.wheelchairFriendlyOnly[checkbox.dataset.wheelchairFilterPark] = checkbox.checked;
+      renderParkPlanningFields();
+      return;
+    }
+
+    const childrenCheckbox = e.target.closest("input[data-children-filter-park]");
+    if(!childrenCheckbox) return;
+    answers.childrenFriendlyOnly[childrenCheckbox.dataset.childrenFilterPark] = childrenCheckbox.checked;
+    renderParkPlanningFields();
+  });
+
+  parkPlanningFields.addEventListener("click",e=>{
+    const btn = e.target.closest(".ride-choice");
+    if(!btn) return;
+    const park = btn.dataset.park;
+    const ride = btn.dataset.ride;
+    if(!answers.parkRides[park]) answers.parkRides[park] = [];
+    const hasRide = answers.parkRides[park].includes(ride);
+    if(hasRide){
+      answers.parkRides[park] = answers.parkRides[park].filter(x=>x!==ride);
+    }else{
+      if(answers.parkRides[park].length >= maxMustDoRidesPerPark){
+        showToast(`You can select up to ${maxMustDoRidesPerPark} must-do rides per park.`);
+        return;
+      }
+      answers.parkRides[park].push(ride);
+    }
+    renderParkPlanningFields();
+  });
+
+  document.getElementById("nextStep").onclick=async ()=>{
+    if(currentStep===0){
+      if(!answers.parks.length){alert("Please choose at least one park.");return;}
+      if(!answers.includeTravel){alert("Please choose whether to include travel time between parks.");return;}
+      currentParkDetailIndex = 0;
+    }
+    if(currentStep===1){
+      if(rideOptionsLoading){alert("Ride options are still loading. Please wait a moment.");return;}
+      const currentPark = getCurrentParkDetail();
+      if(!answers.parkTimes[currentPark]){alert("Please set the planned time for this park.");return;}
+      if(!(answers.parkRides[currentPark] || []).length){alert("Please choose at least one must-do ride for this park.");return;}
+      if(currentParkDetailIndex < answers.parks.length - 1){
+        currentParkDetailIndex += 1;
+        renderParkPlanningFields();
+        return;
+      }
+    }
+    if(currentStep===2){
+      if(!answers.groupSize){alert("Please enter how many people are in your group.");return;}
+      if(!answers.firstVisit){alert("Please choose whether this is your first Universal Parks visit.");return;}
+      if(!answers.overallStay){alert("Please choose how long you plan to stay overall.");return;}
+    }
+    if(currentStep===3){
+      if(!answers.wheelchairUse){alert("Please choose whether you use a wheelchair or mobility device.");return;}
+      if(answers.wheelchairUse === "Yes" && !answers.wheelchairType){alert("Please choose your wheelchair or mobility device type.");return;}
+      if(answers.wheelchairUse === "Yes" && !answers.transferPreference){alert("Please choose whether you transfer for rides or remain seated.");return;}
+      if(answers.wheelchairUse === "Yes" && !answers.boardingTime){alert("Please choose whether you need extra boarding time.");return;}
+    }
+    if(currentStep===4){
+      if(!answers.mildMovement){alert("Please answer the mild movement question.");return;}
+      if(!answers.avoidIntense){alert("Please answer the intense motion question.");return;}
+      if(!answers.indoorPreference){alert("Please choose your indoor or outdoor ride preference.");return;}
+    }
+    if(currentStep===5){
+      if(!answers.caregiverCompanion){alert("Please choose whether you are visiting with a caregiver or companion.");return;}
+      if(!answers.additionalNeeds){alert("Please choose whether anyone else in your group has accessibility needs.");return;}
+    }
     if(currentStep<steps.length-1){showStep(currentStep+1);return;}
-    generateItinerary();
+    const builtByAi = await generateItineraryWithAI();
+    if(!builtByAi){
+      generateItinerary();
+    }
+    applyChatbotPreference();
     questionnaireView.classList.remove("active");
     mapView.classList.add("active");
   };
 
-  document.getElementById("backStep").onclick=()=>showStep(Math.max(0,currentStep-1));
+  renderParkPlanningFields();
+  updateConditionalFields();
+  applyChatbotPreference();
+  updateMapImage();
+
+  document.getElementById("backStep").onclick=()=>{
+    if(currentStep===1 && currentParkDetailIndex > 0){
+      currentParkDetailIndex -= 1;
+      renderParkPlanningFields();
+      return;
+    }
+    showStep(Math.max(0,currentStep-1));
+  };
 
   function addMinutes(time, mins){
     let [clock,ampm]=time.split(" ");
@@ -677,52 +1645,69 @@
   }
 
   function generateItinerary(){
-    const must = answers.mustDos.length ? [...answers.mustDos] : ["Celestial Park","Isle of Berk","Super Nintendo World"];
-    const lowSensory = answers.sensory.includes("Avoid") || answers.sensory.includes("quiet");
-    const reduceWalking = answers.mobility.includes("walking") || answers.mobility.includes("Wheelchair") || answers.mobility.includes("seating");
-
-    let route = ["Celestial Park"];
-    const preferredOrder = reduceWalking
-      ? ["Isle of Berk","Super Nintendo World","Ministry of Magic","Dark Universe"]
-      : ["Super Nintendo World","Ministry of Magic","Dark Universe","Isle of Berk"];
-
-    preferredOrder.forEach(x=>{ if(must.includes(x) && !route.includes(x)) route.push(x); });
-    preferredOrder.forEach(x=>{ if(!route.includes(x) && route.length<5) route.push(x); });
-
-    if(lowSensory){
-      route = route.filter(x=>x!=="Dark Universe" || must.includes("Dark Universe"));
-    }
+    aiPlanNote = "";
+    const plannedParks = answers.parks.length ? [...answers.parks] : ["Epic Universe"];
+    const minutesByParkWindow = {
+      "Less than 2 hours": 105,
+      "2-4 hours": 210,
+      "Half a day": 300,
+      "Full day": 420
+    };
 
     let t=answers.arrival;
     const plan=[];
-    plan.push({time:t,title:"Enter the park",desc:"Begin at Celestial Park and review the accessible route.",tag:"Arrival"});
-    t=addMinutes(t,30);
+    let activityCounter = 0;
 
-    route.forEach((place,idx)=>{
-      if(place==="Celestial Park" && idx===0) return;
-      plan.push({
-        time:t,
-        title:place,
-        desc: place==="Isle of Berk"
-          ? "Explore lower-intensity attractions and accessible viewing areas."
-          : place==="Super Nintendo World"
-          ? "Visit priority attractions using the step-free route."
-          : place==="Ministry of Magic"
-          ? "Use the accessible entrance and allow extra queue time."
-          : "Visit only if the group is comfortable with high sensory intensity.",
-        tag: must.includes(place) ? "Must-do" : "Suggested"
-      });
-      t=addMinutes(t,60);
+    plan.push({
+      time:t,
+      title:"Enter the first park",
+      desc:`Start with accessibility check-in for ${plannedParks[0]}.`,
+      tag:"Arrival"
+    });
+    t=addMinutes(t,25);
 
-      const shouldBreak = answers.breaks==="Every 60 minutes" || (answers.breaks==="Every 90 minutes" && idx%2===1);
-      if(shouldBreak){
+    plannedParks.forEach((park,parkIndex)=>{
+      const plannedWindow = answers.parkTimes[park] || "2-4 hours";
+      const parkWindowMinutes = minutesByParkWindow[plannedWindow] || 210;
+      const chosenRides = (answers.parkRides[park] && answers.parkRides[park].length)
+        ? answers.parkRides[park]
+        : getAvailableRideOptionsForPark(park).slice(0,2).map((ride)=>ride.name);
+
+      const rideMinutes = 45;
+      const maxRidesForWindow = Math.max(1, Math.min(chosenRides.length, Math.floor((parkWindowMinutes - 35) / rideMinutes)));
+      const ridesToSchedule = chosenRides.slice(0,maxRidesForWindow);
+
+      ridesToSchedule.forEach((ride,rideIndex)=>{
+        const estWait = getRideWaitMinutes(ride);
         plan.push({
           time:t,
-          title: answers.sensory==="Add quiet breaks" ? "Quiet sensory break" : "Rest and hydration break",
-          desc:"Use nearby seating and the closest accessible restroom before continuing.",
-          tag:"Accessibility break"
+          title:ride,
+          desc:`Priority ride in ${park}. Typical wait is about ${estWait} minutes, plus queue and boarding time.`,
+          tag:"Suggested"
         });
-        t=addMinutes(t,25);
+        t=addMinutes(t,rideMinutes);
+        activityCounter++;
+
+        const shouldBreak = answers.breaks==="Every 60 minutes" || (answers.breaks==="Every 90 minutes" && activityCounter%2===0);
+        if(shouldBreak && rideIndex<ridesToSchedule.length-1){
+          plan.push({
+            time:t,
+            title:"Rest and hydration break",
+            desc:answers.restroomStops === "Yes" ? "Use nearby seating and the closest accessible restroom before continuing." : "Use nearby seating before continuing.",
+            tag:"Accessibility break"
+          });
+          t=addMinutes(t,20);
+        }
+      });
+
+      if(answers.includeTravel === "Yes" && parkIndex<plannedParks.length-1){
+        plan.push({
+          time:t,
+          title:`Transfer to ${plannedParks[parkIndex+1]}`,
+          desc:answers.avoidCrowds === "Yes" ? "Use the least crowded accessible route between parks and allow extra buffer for entry." : "Use the most accessible path between parks and allow extra buffer for entry.",
+          tag:"Transit"
+        });
+        t=addMinutes(t,35);
       }
     });
 
@@ -734,14 +1719,61 @@
         desc:"Reserved meal window near an accessible seating area.",
         tag:"Meal"
       });
+
+      const hasAfterLunch = plan.some(item=>parseTime(item.time) > parseTime(mealTime));
+      if(!hasAfterLunch){
+        plan.push({
+          time:addMinutes(mealTime,45),
+          title:"Post-lunch highlighted ride",
+          desc:"Continue with one additional priority ride after lunch.",
+          tag:"Suggested"
+        });
+      }
     }
 
-    generatedPlan = plan.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+    generatedPlan = applyRealisticTiming(normalizePlanForLunch(ensureArrivalCheckIn(plan)), answers.arrival);
     localStorage.setItem("generatedPlan",JSON.stringify(generatedPlan));
     localStorage.setItem("plannerAnswers",JSON.stringify(answers));
     renderItinerary();
-    document.getElementById("itineraryTitle").textContent=`${generatedPlan.length} planned stops`;
-    document.getElementById("itinerarySubtitle").textContent="Personalized around your accessibility answers";
+    document.getElementById("openItinerary").title = `${generatedPlan.length} planned stops`;
+  }
+
+  async function generateItineraryWithAI(){
+    if(location.protocol === "file:"){
+      return false;
+    }
+
+    try{
+      const response = await fetch("/api/generate-day",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ answers })
+      });
+
+      if(!response.ok) return false;
+      const data = await response.json();
+      if(!Array.isArray(data.itinerary) || !data.itinerary.length) return false;
+
+      aiPlanNote = typeof data.note === "string" ? data.note : "";
+      const aiPlan = data.itinerary
+        .filter(item=>item && item.time && item.title)
+        .map(item=>({
+          time:String(item.time),
+          title:String(item.title),
+          desc:String(item.desc || "Accessibility-friendly stop."),
+          tag:String(item.tag || "Suggested")
+        }));
+
+      generatedPlan = applyRealisticTiming(normalizePlanForLunch(ensureArrivalCheckIn(aiPlan)), answers.arrival);
+
+      localStorage.setItem("generatedPlan",JSON.stringify(generatedPlan));
+      localStorage.setItem("plannerAnswers",JSON.stringify(answers));
+      renderItinerary();
+      document.getElementById("openItinerary").title = data.subtitle || `${generatedPlan.length} planned stops`;
+      return true;
+    }catch(_error){
+      return false;
+    }
   }
 
   function parseTime(time){
@@ -752,34 +1784,327 @@
     return h*60+m;
   }
 
+  function getParkForRide(rideTitle){
+    const aiMatch = Object.keys(rideOptionsByPark).find(park=>(rideOptionsByPark[park] || []).some((ride)=>ride.name === rideTitle));
+    if(aiMatch) return aiMatch;
+    return Object.keys(parkRideAccessibility).find(park=>(parkRideAccessibility[park] || []).some((ride)=>ride.name === rideTitle)) || null;
+  }
+
+  function walkMinutesBetweenRides(fromTitle,toTitle){
+    const fromPark = getParkForRide(fromTitle);
+    const toPark = getParkForRide(toTitle);
+    const mobilityPenalty = answers.wheelchairUse === "Yes" || answers.boardingTime === "Yes" ? 6 : 0;
+
+    if(!fromPark || !toPark) return 12 + mobilityPenalty;
+    if(fromPark===toPark) return 10 + mobilityPenalty;
+    return 24 + mobilityPenalty;
+  }
+
+  function isRideLikeItem(item){
+    if(!item) return false;
+    if(item.tag === "Suggested" || item.tag === "Must-do" || item.tag === "Added stop") return true;
+    return Boolean(estimatedRideWaits[item.title]);
+  }
+
+  function estimatedDurationForItem(item,prevItem){
+    if(item.tag === "Meal") return 45;
+    if(item.tag === "Transit") return 35;
+    if(item.tag === "Accessibility break") return 20;
+    if(item.tag === "Arrival") return 25;
+
+    if(isRideLikeItem(item)){
+      const wait = estimatedRideWaits[item.title] || 40;
+      const rideCycle = 8;
+      const travel = isRideLikeItem(prevItem) ? walkMinutesBetweenRides(prevItem.title,item.title) : 10;
+      return wait + rideCycle + travel;
+    }
+
+    return 25;
+  }
+
+  function mealPreferenceTime(){
+    if(answers.meal === "No planned meal") return null;
+    return answers.meal.includes("1:30") ? "1:30 PM" : "12:30 PM";
+  }
+
+  function applyRealisticTiming(plan,startTime){
+    const preferredMeal = mealPreferenceTime();
+    const base = [...plan];
+    const nonMeal = base.filter(item=>item.tag !== "Meal");
+    const explicitMeal = base.find(item=>item.tag === "Meal");
+    const retimed = [];
+
+    let t = startTime;
+    let prevItem = null;
+    let mealInserted = false;
+    const mealMinutes = preferredMeal ? parseTime(preferredMeal) : null;
+
+    nonMeal.forEach(item=>{
+      const duration = estimatedDurationForItem(item,prevItem);
+      if(preferredMeal && !mealInserted){
+        const current = parseTime(t);
+        const end = current + duration;
+        if(current <= mealMinutes && mealMinutes < end){
+          const lunch = explicitMeal || {
+            title:"Lunch",
+            desc:"Reserved meal window near an accessible seating area.",
+            tag:"Meal"
+          };
+          retimed.push({ ...lunch, time: preferredMeal });
+          t = addMinutes(preferredMeal,45);
+          mealInserted = true;
+        }
+      }
+
+      retimed.push({ ...item, time: t });
+      t = addMinutes(t,duration);
+      prevItem = item;
+    });
+
+    if(preferredMeal && !mealInserted){
+      const lunch = explicitMeal || {
+        title:"Lunch",
+        desc:"Reserved meal window near an accessible seating area.",
+        tag:"Meal"
+      };
+      const lunchStart = parseTime(t) <= mealMinutes ? preferredMeal : t;
+      retimed.push({ ...lunch, time: lunchStart });
+    }
+
+    if(preferredMeal){
+      const hasAfterLunch = retimed.some(item=>item.tag !== "Meal" && parseTime(item.time) > mealMinutes);
+      if(!hasAfterLunch){
+        retimed.push({
+          time:addMinutes(preferredMeal,45),
+          title:"Post-lunch highlighted ride",
+          desc:"Added to keep your day balanced after lunch with realistic queue and walking time.",
+          tag:"Suggested"
+        });
+      }
+    }
+
+    return retimed.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+  }
+
+  function normalizePlanForLunch(plan){
+    const sorted = [...plan].sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+    if(answers.meal === "No planned meal") return sorted;
+
+    const mealTime = answers.meal.includes("1:30") ? "1:30 PM" : "12:30 PM";
+    const mealMinutes = parseTime(mealTime);
+    const normalized = [...sorted];
+
+    const hasMeal = normalized.some(item=>item.tag === "Meal");
+    if(!hasMeal){
+      normalized.push({
+        time:mealTime,
+        title:"Lunch",
+        desc:"Reserved meal window near an accessible seating area.",
+        tag:"Meal"
+      });
+    }
+
+    const hasAfterLunch = normalized.some(item=>item.tag !== "Meal" && parseTime(item.time) > mealMinutes);
+    if(!hasAfterLunch){
+      normalized.push({
+        time:addMinutes(mealTime,45),
+        title:"Post-lunch highlighted ride",
+        desc:"Continue with a priority attraction after lunch.",
+        tag:"Suggested"
+      });
+      normalized.push({
+        time:addMinutes(mealTime,105),
+        title:"Afternoon flexibility window",
+        desc:"Use this time for another preferred ride, break, or shorter queue option.",
+        tag:"Suggested"
+      });
+    }
+
+    return normalized.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+  }
+
+  function ensureArrivalCheckIn(plan){
+    const hasCheckIn = plan.some((item)=>String(item?.title || "").toLowerCase() === "enter the first park");
+    if(hasCheckIn) return [...plan];
+
+    const firstPark = answers.parks[0] || "your first park";
+    return [{
+      time:answers.arrival,
+      title:"Enter the first park",
+      desc:`Start with accessibility check-in for ${firstPark}.`,
+      tag:"Arrival"
+    }, ...plan];
+  }
+
+  function nowInMinutes(){
+    const now = new Date();
+    return now.getHours()*60 + now.getMinutes();
+  }
+
+  function isRideStop(item){
+    return item.tag === "Must-do" || item.tag === "Suggested" || item.tag === "Added stop";
+  }
+
+  function reserveState(item){
+    const rideAt = parseTime(item.time);
+    const now = nowInMinutes();
+    const delta = rideAt - now;
+    if(delta > 30) return { enabled:false, label:`Reserve in ${delta-30}m` };
+    if(delta < 0) return { enabled:false, label:"Reservation closed" };
+    return { enabled:true, label:"Reserve spot" };
+  }
+
   function renderItinerary(){
-    const noteParts=[];
-    if(answers.mobility) noteParts.push(answers.mobility);
-    if(answers.sensory) noteParts.push(answers.sensory);
-    if(answers.breaks) noteParts.push(answers.breaks);
+    const ensuredPlan = ensureArrivalCheckIn(generatedPlan);
+    if(ensuredPlan.length !== generatedPlan.length){
+      generatedPlan = ensuredPlan.sort((a,b)=>parseTime(a.time)-parseTime(b.time));
+      localStorage.setItem("generatedPlan",JSON.stringify(generatedPlan));
+    }
+
     document.getElementById("planNote").textContent =
-      "This route was generated using: " + noteParts.join(" • ") + ".";
-    document.getElementById("timeline").innerHTML = generatedPlan.map(item=>`
+      aiPlanNote || "Your itinerary is ready.";
+    const reserveWindows = generatedPlan.map(item=>isRideStop(item) ? reserveState(item) : null);
+    const hasEnabledReserve = generatedPlan.some((item,index)=>{
+      if(!isRideStop(item)) return false;
+      const key = `${item.time}-${item.title}`;
+      return reserveWindows[index]?.enabled && !reservedStops.has(key);
+    });
+    const fallbackReserveIndex = generatedPlan.findIndex(item=>{
+      const key = `${item.time}-${item.title}`;
+      return isRideStop(item) && !reservedStops.has(key);
+    });
+    timelineEl.innerHTML = generatedPlan.map((item,index)=>{
+      const checkKey = `${item.time}-${item.title}`;
+      const checked = checkedStops.has(checkKey) ? "checked" : "";
+      const canReserve = isRideStop(item);
+      const reserveKey = `${item.time}-${item.title}`;
+      const isReserved = reservedStops.has(reserveKey);
+      let reservation = canReserve ? reserveWindows[index] : null;
+      if(
+        canReserve &&
+        !isReserved &&
+        !hasEnabledReserve &&
+        index===fallbackReserveIndex
+      ){
+        reservation = { enabled:true, label:"Reserve spot" };
+      }
+      const reserveHtml = canReserve
+        ? `<button class="reserve-btn ${isReserved ? "reserved" : ""}" data-reserve-key="${reserveKey}" ${reservation.enabled || isReserved ? "" : "disabled"}>${isReserved ? "Reserved" : reservation.label}</button>`
+        : "";
+      return `
       <article class="stop">
+        <input class="stop-check" type="checkbox" aria-label="Mark ${item.title} as complete" data-check-key="${checkKey}" data-stop-title="${item.title}" data-feedback-eligible="${canReserve ? "true" : "false"}" ${checked}>
         <div class="time">${item.time}</div>
         <div>
           <h3>${item.title}</h3>
-          <p>${item.desc}</p>
-          <span class="tag">${item.tag}</span>
+          <div class="stop-meta">
+            <span class="tag">${item.tag}</span>
+            ${reserveHtml}
+          </div>
         </div>
       </article>
-    `).join("");
+    `;
+    }).join("");
   }
+
+  timelineEl.addEventListener("change",e=>{
+    const input = e.target.closest(".stop-check");
+    if(!input) return;
+    const key = input.dataset.checkKey;
+    const title = input.dataset.stopTitle || "this ride";
+    const feedbackEligible = input.dataset.feedbackEligible === "true";
+    if(input.checked) checkedStops.add(key);
+    else {
+      checkedStops.delete(key);
+      delete wheelchairFeedback[key];
+      localStorage.setItem("wheelchairFeedback",JSON.stringify(wheelchairFeedback));
+    }
+    localStorage.setItem("checkedStops",JSON.stringify([...checkedStops]));
+    if(input.checked && feedbackEligible) openWheelchairFeedback(key,title);
+  });
+
+  function openWheelchairFeedback(key,title){
+    feedbackTargetKey = key;
+    feedbackTargetTitle = title;
+    selectedFeedbackScore = wheelchairFeedback[key] ? String(wheelchairFeedback[key]) : "";
+    feedbackPrompt.textContent = `How likely are you to recommend ${title} for a wheelchair user?`;
+    [...feedbackOptions.querySelectorAll(".feedback-option")].forEach(btn=>{
+      btn.classList.toggle("selected", btn.dataset.score===selectedFeedbackScore);
+    });
+    feedbackBackdrop.classList.add("open");
+    feedbackModal.classList.add("open");
+  }
+
+  function closeWheelchairFeedback(){
+    feedbackBackdrop.classList.remove("open");
+    feedbackModal.classList.remove("open");
+    feedbackTargetKey = "";
+    feedbackTargetTitle = "";
+    selectedFeedbackScore = "";
+  }
+
+  feedbackOptions.addEventListener("click",e=>{
+    const btn = e.target.closest(".feedback-option");
+    if(!btn) return;
+    selectedFeedbackScore = btn.dataset.score;
+    [...feedbackOptions.querySelectorAll(".feedback-option")].forEach(option=>{
+      option.classList.toggle("selected", option===btn);
+    });
+  });
+
+  document.getElementById("feedbackSave").onclick=()=>{
+    if(!feedbackTargetKey) return;
+    if(!selectedFeedbackScore){
+      showToast("Please pick a rating first");
+      return;
+    }
+    wheelchairFeedback[feedbackTargetKey] = Number(selectedFeedbackScore);
+    localStorage.setItem("wheelchairFeedback",JSON.stringify(wheelchairFeedback));
+    closeWheelchairFeedback();
+    showToast("Wheelchair recommendation saved");
+  };
+
+  document.getElementById("feedbackSkip").onclick=()=>{
+    closeWheelchairFeedback();
+  };
+
+  feedbackBackdrop.onclick=closeWheelchairFeedback;
+
+  timelineEl.addEventListener("click",e=>{
+    const btn = e.target.closest(".reserve-btn");
+    if(!btn || btn.disabled) return;
+    const key = btn.dataset.reserveKey;
+    const isReserved = reservedStops.has(key);
+    if(isReserved) reservedStops.delete(key);
+    else reservedStops.add(key);
+    localStorage.setItem("reservedStops",JSON.stringify([...reservedStops]));
+    renderItinerary();
+    showToast(isReserved ? "Returned to original state" : "Ride spot reserved");
+  });
+
+  setInterval(()=>{
+    if(itineraryView.classList.contains("active")) renderItinerary();
+  },60000);
 
   function switchView(from,to){
     from.classList.remove("active");
     to.classList.add("active");
   }
 
-  document.getElementById("openItinerary").onclick=()=>switchView(mapView,itineraryView);
+  document.getElementById("openItinerary").onclick=()=>{
+    if(!generatedPlan.length){
+      switchView(mapView,questionnaireView);
+      showStep(0);
+      return;
+    }
+    switchView(mapView,itineraryView);
+  };
   document.getElementById("backToMap").onclick=()=>switchView(itineraryView,mapView);
   document.getElementById("startOver").onclick=()=>{
-    switchView(mapView,questionnaireView);
+    const activeView = document.querySelector(".view.active");
+    if(activeView && activeView!==questionnaireView){
+      switchView(activeView,questionnaireView);
+    }
     showStep(0);
   };
 
@@ -795,6 +2120,7 @@
   }
 
   function openSheet(id){
+    if(!id || !attractions[id]) return;
     selected=id;
     const a=attractions[id];
     document.getElementById("title").textContent=a.name;
@@ -807,11 +2133,36 @@
     document.getElementById("sensory").textContent=a.sensory;
     document.getElementById("transfer").textContent=a.transfer;
     document.getElementById("restroom").textContent=a.restroom;
+
+    if(Array.isArray(a.rides) && a.rides.length){
+      rideSwipeWrap.hidden = false;
+      rideSwipe.innerHTML = a.rides.map((ride)=>`
+        <article class="ride-card">
+          <h4>${ride.name}</h4>
+          <p>${ride.description}</p>
+          <div class="ride-card-meta">
+            ${[
+              ride.wait ? `<span>Wait: ${ride.wait}</span>` : "",
+              ride.mobility ? `<span>Mobility: ${ride.mobility}</span>` : "",
+              ride.sensory ? `<span>Sensory: ${ride.sensory}</span>` : "",
+              ride.environment ? `<span>Environment: ${ride.environment}</span>` : "",
+              ride.sound ? `<span>Sound: ${ride.sound}</span>` : "",
+              ride.transfer ? `<span>Transfer: ${ride.transfer}</span>` : "",
+            ].join("")}
+          </div>
+        </article>
+      `).join("");
+      rideSwipe.scrollLeft = 0;
+    }else{
+      rideSwipeWrap.hidden = true;
+      rideSwipe.innerHTML = "";
+    }
+
     sheet.classList.add("open");
     backdrop.classList.add("open");
   }
   function closeSheet(){sheet.classList.remove("open");backdrop.classList.remove("open")}
-  document.querySelectorAll(".hotspot").forEach(btn=>btn.onclick=()=>openSheet(btn.dataset.id));
+  mapHotspots.forEach(btn=>btn.onclick=()=>openSheet(btn.dataset.id));
   document.getElementById("closeSheet").onclick=closeSheet;
   backdrop.onclick=closeSheet;
   document.getElementById("addBtn").onclick=()=>{
